@@ -35,10 +35,9 @@ html {
 
 
 body {
-    min-height: 100dvh;
+    min-height: 80dvh;
     overflow-x: hidden;
     background-color: var(--bg-primary);
-    background-color: darkblue;
     color: var(--color-primary);
     transition:
         background-color 350ms ease-in-out,

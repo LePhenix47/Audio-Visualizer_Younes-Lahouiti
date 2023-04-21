@@ -3,10 +3,16 @@ $scrollbar-thumb-bg-color: #757575;
 $scrollbar-thumb-bg-color--hover: #9d9d9d;
 $scrollbar-thumb-bg-color--active: #9d9d9d;
 
+
+$bg-primary: white;
+$color-primary: black;
+
 //CSS
 :root {
-    --scrollbar-track-bg-color:#{$scrollbar-track-bg-color};
+    --bg-primary: #{$bg-primary};
+    --color-primary: #{$color-primary};
 
+    --scrollbar-track-bg-color:#{$scrollbar-track-bg-color};
     --scrollbar-thumb-bg-color:#{$scrollbar-thumb-bg-color};
     --scrollbar-thumb-bg-color--hover:#{$scrollbar-thumb-bg-color--hover};
     --scrollbar-thumb-bg-color--active:#{$scrollbar-thumb-bg-color--active};

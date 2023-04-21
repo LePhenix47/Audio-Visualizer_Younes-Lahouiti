@@ -7,8 +7,13 @@
     $scrollbar-thumb-bg-color--hover: #9d9d9d;
     $scrollbar-thumb-bg-color--active: #9d9d9d;
 
+    $bg-primary: black;
+    $color-primary: white;
+
     //CSS
     :root {
+        --bg-primary: #{$bg-primary};
+        --color-primary: #{$color-primary};
 
         --scrollbar-track-bg-color:#{$scrollbar-track-bg-color};
 

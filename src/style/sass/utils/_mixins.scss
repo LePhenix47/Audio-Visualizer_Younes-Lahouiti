@@ -9,6 +9,8 @@
     @media screen and (768px <=width <=992px) {
         @content;
     }
+
+    ;
 }
 
 @mixin laptop-only {
@@ -78,6 +80,7 @@
 
 //Mixin to get the text ellipsis effect after a few lines
 @mixin multiline-ellipsis-effect($columns: 2) {
+    //As of 2023 the line-clamp property still hasn't been standardized yet
     display: -webkit-box;
     -webkit-line-clamp: $columns;
     -webkit-box-orient: vertical;
