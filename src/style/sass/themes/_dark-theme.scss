@@ -1,0 +1,29 @@
+@media (prefers-color-scheme: dark) {
+    //SASS
+
+
+    $scrollbar-track-bg-color: transparent;
+    $scrollbar-thumb-bg-color: #757575;
+    $scrollbar-thumb-bg-color--hover: #9d9d9d;
+    $scrollbar-thumb-bg-color--active: #9d9d9d;
+
+    //CSS
+    :root {
+
+        --scrollbar-track-bg-color:#{$scrollbar-track-bg-color};
+
+        --scrollbar-thumb-bg-color:#{$scrollbar-thumb-bg-color};
+        --scrollbar-thumb-bg-color--hover:#{$scrollbar-thumb-bg-color--hover};
+        --scrollbar-thumb-bg-color--active:#{$scrollbar-thumb-bg-color--active};
+
+    }
+
+    ::backdrop {
+
+        --scrollbar-track-bg-color:#{$scrollbar-track-bg-color};
+
+        --scrollbar-thumb-bg-color:#{$scrollbar-thumb-bg-color};
+        --scrollbar-thumb-bg-color--hover:#{$scrollbar-thumb-bg-color--hover};
+        --scrollbar-thumb-bg-color--active:#{$scrollbar-thumb-bg-color--active};
+    }
+}
