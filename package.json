@@ -4,9 +4,9 @@
   "description": "Audio visualizer built with JavaScript and canvas elements",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server --open"
+    "sass": "sass --watch ./style/sass/main.scss:./style/css/style.css --style compressed",
+    "ts": "tsc --watch",
+    "dev": "webpack --watch"
   },
   "keywords": [
     "audio",
