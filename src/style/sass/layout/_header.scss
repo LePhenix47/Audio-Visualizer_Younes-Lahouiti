@@ -5,5 +5,11 @@
         text-align: center;
         margin: 25px 0;
 
+        // font-size: 7vw;
+        font-size: 58px;
+
+        @include mobile-only {
+            font-size: 35px;
+        }
     }
 }

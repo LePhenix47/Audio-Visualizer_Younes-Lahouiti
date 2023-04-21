@@ -1,6 +1,6 @@
 @media (prefers-color-scheme: dark) {
     //SASS
-
+    // color-scheme: dark;
 
     $scrollbar-track-bg-color: transparent;
     $scrollbar-thumb-bg-color: #757575;
@@ -12,6 +12,8 @@
 
     //CSS
     :root {
+        color-scheme: dark;
+
         --bg-primary: #{$bg-primary};
         --color-primary: #{$color-primary};
 
@@ -20,6 +22,13 @@
         --scrollbar-thumb-bg-color:#{$scrollbar-thumb-bg-color};
         --scrollbar-thumb-bg-color--hover:#{$scrollbar-thumb-bg-color--hover};
         --scrollbar-thumb-bg-color--active:#{$scrollbar-thumb-bg-color--active};
+
+        //For svgs
+        .svg {
+            filter: invert(100%) hue-rotate(180deg);
+
+            transition: filter 350ms ease-in-out;
+        }
 
     }
 

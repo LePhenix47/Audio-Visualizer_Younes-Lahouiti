@@ -6,17 +6,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta name="description" content="Timer Page:
-        Countdown timer page for tracking time. Set a specified amount of time and start the countdown.
-        Get notified when the time is up." />
+    <meta name="description"
+        content="An audio visualizer is a tool that allows users to upload an audio file and play it while displaying a corresponding visualization on the screen. This can be achieved by analyzing the audio data and generating a graphical representation of the sound waves. Typically, the visualization will be synchronized with the audio, creating an immersive and engaging experience for the user." />
     <meta name="robots" content="index, follow">
 
     <!-- Open Graph     -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Home page" />
-    <meta property="og:description" content="Timer Page:
-        Countdown timer page for tracking time. Set a specified amount of time and start the countdown.
-        Get notified when the time is up." />
+    <meta property="og:description"
+        content="An audio visualizer is a tool that allows users to upload an audio file and play it while displaying a corresponding visualization on the screen. This can be achieved by analyzing the audio data and generating a graphical representation of the sound waves. Typically, the visualization will be synchronized with the audio, creating an immersive and engaging experience for the user." />
     <!-- <meta property="og:image" content="/profile-pic.jpg" /> -->
     <meta property="og:image:width" content="130" />
     <meta property="og:image:height" content="170" />
@@ -32,7 +30,7 @@
     <script src="https://kit.fontawesome.com/904e9ee361.js" crossorigin="anonymous"></script>
 
     <!-- Page logo -->
-    <!-- <link rel="icon" type="image/png" href="./public/images/hourglass.png" /> -->
+    <link rel="icon" type="image/png" href="./public/images/png/visualizer-icon.png" />
 
     <!-- JS -->
     <script defer src="./dist/index.js"></script>
@@ -43,8 +41,48 @@
     <header class="header">
         <h1 class="header__title">Audio visualizer</h1>
     </header>
-    <main class="index"></main>
-    <footer class="footer">Footer</footer>
+    <main class="index">
+        <label for="audio-file" class="index__label index__file-label"><svg xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24" class="svg index__svg">
+                <path
+                    d="M8.71,7.71,11,5.41V15a1,1,0,0,0,2,0V5.41l2.29,2.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42l-4-4a1,1,0,0,0-.33-.21,1,1,0,0,0-.76,0,1,1,0,0,0-.33.21l-4,4A1,1,0,1,0,8.71,7.71ZM21,12a1,1,0,0,0-1,1v6a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V13a1,1,0,0,0-2,0v6a3,3,0,0,0,3,3H19a3,3,0,0,0,3-3V13A1,1,0,0,0,21,12Z">
+                </path>
+            </svg>
+        </label>
+        <input type="file" id="audio-file" class="index__input index__file-input hide" />
+
+        <section class="index__audio-player hide">
+            <canvas class="index__canvas index__canvas--round"></canvas>
+            <h2 class="index__audio-player--name"></h2>
+            <div class="index__audio-player--progress">
+                <div class="index__audio-player--progress-bar">
+                    <span class="index__audio-player--current-progress"></span>
+                </div>
+                <div class="index__audio-player--timestamp">
+                    <p class="index__audio-player--current-time">0:00</p>
+                    <p class="index__audio-player--total-time">-:--</p>
+                </div>
+            </div>
+            <div class="index__audio-player--controls">
+                <div class="index__audio-player--buttons">
+                    <button class="index__audio-player--button">Previous</button>
+                    <button class="index__audio-player--button">Play</button>
+                    <button class="index__audio-player--button">Next</button>
+                </div>
+                <div class="index__audio-player--volume">
+                    <button class="index__audio-player"></button>
+
+                </div>
+            </div>
+        </section>
+
+        <canvas class="index__canvas index__canvas--bars"></canvas>
+
+    </main>
+    <footer class="footer">
+        <p class="footer__paragraph">Made by: <a href="https://younes-portfolio-dev.vercel.app/" target="blank">Younes
+                Lahouiti</a></p>
+    </footer>
 
 </body>
 

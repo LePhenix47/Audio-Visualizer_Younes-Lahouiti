@@ -1,3 +1,29 @@
 @use "../utils/" as *;
 
-.index {}
+.index {
+    @include center-flex-column;
+    min-height: 50dvh;
+
+    &__svg {
+        aspect-ratio: 1/1;
+        height: 50%;
+    }
+
+    &__file-label {
+        border: 5px dashed red;
+        border-radius: 10px;
+
+        aspect-ratio: 1/1;
+        height: 250px;
+
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    &__audio-player {
+        background-color: purple;
+        position: relative;
+    }
+}

@@ -1,13 +1,10 @@
 @use "../utils/" as *;
 
-.active {}
-
-.dragging {}
 
 .hide {
     display: none;
 }
 
-.js-disabled {
+.no-event-listener {
     pointer-events: none;
 }
