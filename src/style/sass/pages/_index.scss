@@ -88,7 +88,11 @@
             padding-bottom: 20px;
         }
 
-        &--progress {}
+        &--progress {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
         &--progress-bar {
             display: flex;
@@ -194,11 +198,14 @@
 
                 border-radius: 100vmax;
                 box-shadow: -105px 0px 0px 100px darkgrey;
+
                 transition: background-color 250ms ease-out;
 
                 @include mobile-only {
-                    box-shadow: -155px 0px 0px 150vw darkgrey;
+                    box-shadow: -155px 0px 0px 150px darkgrey;
                 }
+
+
             }
 
 
