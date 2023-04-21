@@ -1,15 +1,41 @@
 @use "../utils/" as *;
 
 .header {
-    &__title {
-        text-align: center;
-        margin: 25px 0;
+    @include center-flex-column;
 
-        // font-size: 7vw;
+    &__title {
+
+        text-align: center;
         font-size: 58px;
+
+        margin-top: 25px;
+        padding: 25px 0;
+
+        border: 2px solid var(--color-primary);
+        border-radius: 5px;
 
         @include mobile-only {
             font-size: 35px;
         }
     }
+
+    &__span {
+        padding: 25px 10px;
+
+
+        &--background {
+
+            background-color: var(--color-primary);
+            color: var(--bg-primary);
+        }
+
+        &--hollow {
+            border-radius: inherit;
+
+            color: transparent;
+            -webkit-text-stroke: 2px var(--color-primary);
+        }
+    }
+
+
 }

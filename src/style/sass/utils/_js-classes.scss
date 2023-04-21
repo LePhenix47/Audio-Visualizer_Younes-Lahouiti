@@ -2,9 +2,9 @@
 
 
 .hide {
-    display: none;
+    display: none !important;
 }
 
 .no-event-listener {
-    pointer-events: none;
+    pointer-events: none !important;
 }

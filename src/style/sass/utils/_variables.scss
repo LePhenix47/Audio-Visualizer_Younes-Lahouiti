@@ -3,8 +3,13 @@ $scrollbar-thumb-bg-color: #757575;
 $scrollbar-thumb-bg-color--hover: #9d9d9d;
 $scrollbar-thumb-bg-color--active: #9d9d9d;
 
+$selection-bg-color: #005aff;
+
 
 $bg-primary: white;
+$bg-secondary: darken(white, 10%);
+$bg-tertiary: rgb(165, 165, 165);
+
 $color-primary: black;
 
 //CSS
@@ -12,7 +17,12 @@ $color-primary: black;
     color-scheme: light;
 
     --bg-primary: #{$bg-primary};
+    --bg-secondary: #{$bg-secondary};
+    --bg-tertiary: #{$bg-tertiary};
+
     --color-primary: #{$color-primary};
+
+    --selection-bg-color:#{$selection-bg-color};
 
     --scrollbar-track-bg-color:#{$scrollbar-track-bg-color};
     --scrollbar-thumb-bg-color:#{$scrollbar-thumb-bg-color};

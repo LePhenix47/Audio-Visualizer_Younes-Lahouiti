@@ -1,3 +1,10 @@
 @use "../utils/" as *;
 
-.footer {}
+.footer {
+    z-index: 3;
+    background-color: var(--bg-secondary);
+
+    &__paragraph {
+        padding: 15px;
+    }
+}

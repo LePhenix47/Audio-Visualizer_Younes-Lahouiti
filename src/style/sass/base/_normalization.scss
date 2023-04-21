@@ -24,8 +24,9 @@
 
 
 *::selection {
-    background-color: red;
+    -webkit-text-stroke: transparent;
     color: white;
+    background-color: var(--selection-bg-color);
 }
 
 html {
