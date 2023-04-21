@@ -65,9 +65,7 @@
 
 //Mixin to make the image fit
 @mixin fit-image {
-    -o-object-fit: cover;
     object-fit: cover;
-    -o-object-position: center;
     object-position: center;
 }
 
@@ -81,11 +79,10 @@
 //Mixin to get the text ellipsis effect after a few lines
 @mixin multiline-ellipsis-effect($columns: 2) {
     display: -webkit-box;
-
     -webkit-line-clamp: $columns;
-    line-clamp: $columns;
-
     -webkit-box-orient: vertical;
+
+    line-clamp: $columns;
 
     overflow: hidden;
 }

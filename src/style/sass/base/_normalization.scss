@@ -22,9 +22,11 @@
     padding: 0;
 }
 
-*::-moz-selection {}
 
-*::selection {}
+*::selection {
+    background-color: red;
+    color: white;
+}
 
 html {
     scroll-behavior: smooth;
@@ -36,6 +38,7 @@ body {
     min-height: 100dvh;
     overflow-x: hidden;
     background-color: var(--bg-primary);
+    background-color: darkblue;
     color: var(--color-primary);
     transition:
         background-color 350ms ease-in-out,
