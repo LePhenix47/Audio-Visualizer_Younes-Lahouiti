@@ -26,7 +26,7 @@ The Audio Visualizer is a web application that allows you to upload an audio fil
 
 ## Credits
 
-This project was created by [Your Name]. 
+This project was created by Younes Lahouiti. 
 
 ## License
 
