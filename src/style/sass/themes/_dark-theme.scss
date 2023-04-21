@@ -34,12 +34,9 @@
         --scrollbar-thumb-bg-color--hover:#{$scrollbar-thumb-bg-color--hover};
         --scrollbar-thumb-bg-color--active:#{$scrollbar-thumb-bg-color--active};
 
-        //For svgs
-        // .svg {
-        //     filter: invert(100%) hue-rotate(180deg);
-
-        //     transition: filter 350ms ease-in-out;
-        // }
+        .index__audio-player {
+            background-position: 100%;
+        }
 
     }
 

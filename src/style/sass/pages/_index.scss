@@ -2,7 +2,12 @@
 
 .index {
     @include center-flex-column;
+
+    background-color: transparent;
+
     min-height: 78dvh;
+
+    position: relative;
 
     &__svg {
         aspect-ratio: 1/1;
@@ -13,18 +18,28 @@
     z-index: 2;
 
     &__canvas {
-        display: none;
         z-index: 1;
 
         &--bars {
+            display: none;
             position: absolute;
             @include absolute-center;
 
             height: 100%;
             width: 100%;
 
-            // outline: 2px solid red;
             outline-offset: -3px;
+        }
+
+        &--round {
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            z-index: -1;
+
+            width: 100%;
+            height: 100%;
         }
     }
 
@@ -51,10 +66,27 @@
 
 
     &__audio-player {
-        background-color: purple;
-        position: relative;
+        background-image: linear-gradient(90deg,
+                #dedad6, #dedad633,
+                #212529, #21252933);
+        background-position: 0%;
+        background-size: 200%;
 
-        &--name {}
+        transition:
+            background-position 350ms ease-in-out;
+
+        backdrop-filter: blur(15px);
+
+        position: relative; //relative to the round <canvas> element
+
+        padding: 20px;
+        border-radius: 10px;
+
+        z-index: 2;
+
+        &--name {
+            padding-bottom: 20px;
+        }
 
         &--progress {}
 
@@ -97,7 +129,9 @@
 
         &--source {}
 
-        &--controls {}
+        &--controls {
+            @include center-flex(15px)
+        }
 
         &--buttons {}
 
