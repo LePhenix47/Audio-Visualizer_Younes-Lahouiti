@@ -50,7 +50,8 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].css",
+      // change filename option from index.css to style.css
+      filename: "style.css",
       ignoreOrder: true,
     }),
   ],
