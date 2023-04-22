@@ -1,6 +1,15 @@
 @use "../utils/" as *;
 
 
+.active {
+    border: 2px solid var(--color-primary) !important;
+
+
+    &>.index__svg {
+        color: var(--color-primary) !important;
+    }
+}
+
 .hide {
     display: none !important;
 }

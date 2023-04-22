@@ -6,10 +6,7 @@
  * @returns  - The element selected or `null` if the element doesn't exist
  */
 
-export function selectQuery(
-  query: string,
-  container?: HTMLElement
-): HTMLElement | null {
+export function selectQuery(query: string, container?: HTMLElement): any {
   if (!container) {
     return document.querySelector(query);
   }
@@ -33,10 +30,7 @@ export function selectQuery(
  * @param {HTMLElement} container - HTML Element to select the query from
  * @returns {HTMLElement[]|null} - An array with all the elements selected or `null` if the element doesn't exist
  */
-export function selectQueryAll(
-  query: string,
-  container?: HTMLElement
-): HTMLElement[] | null {
+export function selectQueryAll(query: string, container?: HTMLElement): any {
   if (!container) {
     return Array.from(document.querySelectorAll(query));
   }
@@ -183,4 +177,42 @@ export function enableElement(element: any): void {
  */
 export function disableElement(element: any): void {
   replaceAttribute(element, "enabled", "disabled");
+}
+
+/**
+ * Adds a class name to a given element's class list
+ * @param {any} element - The element to add the class to
+ * @param {string} className - The class name to add
+ * @returns {void}
+ */
+export function addClass(element: any, className: string): void {
+  element.classList.add(className);
+}
+
+/**
+ * Removes a class name from a given element's class list
+ * @param {any} element - The element to remove the class from
+ * @param {string} className - The class name to remove
+ * @returns {void}
+ */
+export function removeClass(
+  element: { classList: { remove: (arg0: any) => void } },
+  className: any
+): void {
+  element.classList.remove(className);
+}
+
+/**
+ * Replaces an old class name with a new class name in a given element's class list
+ * @param {any} element - The element to replace the class name in
+ * @param {string} oldClassName - The old class name to replace
+ * @param {string} newClassName - The new class name to replace with
+ * @returns {void}
+ */
+export function replaceClass(
+  element: any,
+  oldClassName: string,
+  newClassName: string
+): void {
+  element.classList.replace(oldClassName, newClassName);
 }

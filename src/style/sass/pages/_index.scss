@@ -11,7 +11,7 @@
 
     &__svg {
         aspect-ratio: 1/1;
-        height: 50%;
+        height: 25%;
         color: var(--bg-tertiary);
     }
 
@@ -44,7 +44,7 @@
     }
 
     &__file-label {
-        border: 5px dashed var(--bg-tertiary);
+        border: 2px dashed var(--bg-tertiary);
         border-radius: 10px;
 
         aspect-ratio: 1/1;
@@ -66,6 +66,12 @@
 
 
     &__audio-player {
+        display: flex;
+        justify-content: center;
+
+        flex-direction: column;
+        gap: 15px;
+
         background-image: linear-gradient(90deg,
                 #dedad6, #dedad633,
                 #212529, #21252933);
@@ -82,10 +88,19 @@
         padding: 20px;
         border-radius: 10px;
 
+        width: 50%;
+        min-height: 250px;
+
         z-index: 2;
+
+        @include mobile-only {
+            width: 80%;
+        }
 
         &--name {
             padding-bottom: 20px;
+
+            @include single-ellipsis-effect;
         }
 
         &--progress {
@@ -100,21 +115,23 @@
             width: 100%;
             min-height: 15px;
 
-            background-color: blue;
+            background-color: grey;
 
             border-radius: 100vmax;
         }
 
         &--current-progress {
+            --progress: 0%;
             display: inline-block !important;
 
             min-height: 15px;
 
-            width: 50%;
+            width: var(--progress);
             max-width: 100%;
 
-            background-color: cyan;
+            background-color: white;
 
+            border: 2px solid black;
             border-radius: inherit;
 
             transition: width 350ms ease-out;
@@ -134,10 +151,28 @@
         &--source {}
 
         &--controls {
-            @include center-flex(15px)
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+
+            margin-top: 25px;
+
+            @include mobile-only {
+                flex-direction: column;
+
+                gap: 25px;
+                margin: 25px;
+            }
         }
 
-        &--buttons {}
+        &--buttons {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            gap: 15px;
+        }
 
         &--button {}
 
@@ -149,80 +184,33 @@
 
         &--slider {
             appearance: none;
-            background-color: black;
+            background-color: var(--bg-primary);
             border-radius: 25px;
             height: 10px;
             overflow: hidden;
 
             width: 210px;
 
-            --track-height: 10px;
-            --thumb-size: 10px;
+
 
             &::-webkit-slider-runnable-track {
-                border-radius: 25px;
-                background-color: var(--color-input-range-bg);
-
-                width: 100%;
-                height: var(--track-height);
-
-                overflow: hidden;
-
-                &:hover {
-                    cursor: pointer;
-                }
+                @include range-input-track-style;
             }
 
             &::-moz-range-track {
-                border-radius: 25px;
-                background-color: var(--color-input-range-bg);
-
-                width: 100%;
-                height: 10px;
-
-                overflow: hidden;
-
-                &:hover {
-                    cursor: pointer;
-                }
+                @include range-input-track-style;
             }
 
 
 
             &::-webkit-slider-thumb {
-                appearance: none;
-                width: var(--thumb-size);
-                height: var(--thumb-size);
-                border: transparent;
-                background-color: white;
-
-                border-radius: 100vmax;
-                box-shadow: -105px 0px 0px 100px darkgrey;
-
-                transition: background-color 250ms ease-out;
-
-                @include mobile-only {
-                    box-shadow: -155px 0px 0px 150px darkgrey;
-                }
-
+                @include range-input-thumb-style;
 
             }
 
 
             &::-moz-range-thumb {
-                appearance: none;
-                width: var(--thumb-size);
-                height: var(--thumb-size);
-                border: transparent;
-                background-color: white;
-
-                border-radius: 100vmax;
-                box-shadow: -105px 0px 0px 100px darkgrey;
-                transition: background-color 250ms ease-out;
-
-                @include mobile-only {
-                    box-shadow: -155px 0px 0px 150vw darkgrey;
-                }
+                @include range-input-thumb-style;
             }
         }
 

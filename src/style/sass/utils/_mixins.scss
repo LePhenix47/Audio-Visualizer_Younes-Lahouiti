@@ -89,3 +89,42 @@
 
     overflow: hidden;
 }
+
+/*
+//Element specific mixins
+*/
+
+@mixin range-input-track-style {
+    --track-height: 10px;
+
+    border-radius: 25px;
+    background-color: var(--color-input-range-bg);
+
+    width: 100%;
+    height: var(--track-height);
+
+    overflow: hidden;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+@mixin range-input-thumb-style {
+    --thumb-size: 10px;
+
+    appearance: none;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    border: transparent;
+    background-color: var(--color-primary);
+
+    border-radius: 100vmax;
+    box-shadow: -105px 0px 0px 100px darkgrey;
+
+    transition: background-color 250ms ease-out;
+
+    @include mobile-only {
+        box-shadow: -155px 0px 0px 150px darkgrey;
+    }
+}
