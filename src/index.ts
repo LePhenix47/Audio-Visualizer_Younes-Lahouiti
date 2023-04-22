@@ -8,11 +8,22 @@ import {
 } from "./utils/functions/dom.functions";
 import { splitString } from "./utils/functions/string.functions";
 
-const labelDropZoneArea: HTMLLabelElement = selectQuery(".index__file-label");
+//Components
+import "./components/audio-player.component";
 
-const customAudioPlayer: HTMLSelectElement = selectQuery(
-  ".index__audio-player"
+//Test, to be changed
+
+const customAudioPlayerComponent: HTMLSelectElement =
+  selectQuery("audio-player");
+
+log(customAudioPlayerComponent);
+
+const labelDropZoneArea: HTMLLabelElement = selectQuery(
+  ".index__file-label",
+  customAudioPlayerComponent
 );
+
+log(labelDropZoneArea);
 
 const bodyDocument: HTMLBodyElement = selectQuery("body");
 
@@ -66,32 +77,6 @@ async function uploadAudio(event: DragEvent): Promise<any> {
   }
   log({ lastModified, name, type, size });
 
-  await transformFileToBase64Text(fileUploaded);
-
-  removeClass(customAudioPlayer, "hide");
+  // removeClass(customAudioPlayer, "hide");
   addClass(labelDropZoneArea, "hide");
-}
-
-async function transformFileToBase64Text(audioFile: File) {
-  const reader: FileReader = new FileReader();
-
-  reader.addEventListener("load", async (e: ProgressEvent<FileReader>) => {
-    let base64MediaString: string | ArrayBuffer = reader.result;
-
-    // @ts-ignore
-    let audio: HTMLAudioElement = new Audio(base64MediaString);
-
-    /**
-     * Test - BEGIN
-     */
-    addClass(audio, "index__audio--source");
-    customAudioPlayer.appendChild(audio);
-
-    const test: HTMLAudioElement = selectQuery(".index__audio--source");
-    log(test.duration);
-    /**
-     * Test - END
-     */
-  });
-  reader.readAsDataURL(audioFile);
 }

@@ -59,3 +59,18 @@ export function getAudioTotalTime(audio: HTMLAudioElement): number {
 export function checkIfAudioEnd(audio: HTMLAudioElement): boolean {
   return audio.ended;
 }
+
+export async function transformFileToBase64Text(audioFile: File) {
+  const reader: FileReader = new FileReader();
+
+  reader.readAsDataURL(audioFile);
+
+  reader.addEventListener("load", async (e: ProgressEvent<FileReader>) => {
+    let base64MediaString: string | ArrayBuffer = reader.result;
+
+    // @ts-ignore
+    let audio: HTMLAudioElement = new Audio(base64MediaString);
+
+    return audio;
+  });
+}
