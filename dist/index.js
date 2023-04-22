@@ -77,9 +77,9 @@ function getAncestor(elementOfReference, cssSelector = "") {
 /**
  *Returns the host element of a web component given a reference element within it.
  *
- *@param {Element} elementOfReference - An element that is a child of the web component.
+ *@param {any} elementOfReference - An element that is a child of the web component.
  *
- * @returns {Element} - The host element of the web component.
+ * @returns {any} - The host element of the web component.
  */
 function getComponentHost(elementOfReference) {
     //@ts-ignore
@@ -802,9 +802,6 @@ class AudioPlayer extends HTMLElement {
         //We add it as a child of our web component
         shadowRoot.appendChild(clonedTemplate);
     }
-    getShadowRoot() {
-        return this.shadowRoot;
-    }
     /**
      * Methods to handle events
      */
@@ -821,27 +818,18 @@ class AudioPlayer extends HTMLElement {
      * @param {DragEvent} event - The drop event.
      * @returns {any} - Returns nothing.
      */
-    uploadAudio(event) {
+    uploadAudioDrop(event) {
         return __awaiter(this, void 0, void 0, function* () {
             console_functions_log(event);
             event.preventDefault();
-            const labelDropZoneArea = event.currentTarget;
             const fileUploaded = event.dataTransfer.files[0];
-            const { lastModified, name, type, size } = fileUploaded;
-            const fileType = splitString(type, "/")[0];
-            const isNotAudioFile = fileType !== "audio";
-            if (isNotAudioFile) {
-                console_functions_log("%cFile uploaded is not an audio!", "background: crimson; padding: 5px; ");
-                //@ts-ignore
-                event.target.value = "";
-                return;
-            }
-            console_functions_log({ lastModified, name, type, size });
-            //@ts-ignore
-            const shadowRoot = getComponentHost(labelDropZoneArea);
-            const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
-            removeClass(customAudioPlayer, "hide");
-            addClass(labelDropZoneArea, "hide");
+            const componentHost = getComponentHost(event.currentTarget);
+            showAudioPlayer(componentHost, fileUploaded);
+            // //@ts-ignore
+            // const shadowRoot: ShadowRoot = getComponentHost(labelDropZoneArea);
+            // const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
+            // removeClass(customAudioPlayer, "hide");
+            // addClass(labelDropZoneArea, "hide");
         });
     }
     uploadAudioInput(event) {
@@ -850,8 +838,9 @@ class AudioPlayer extends HTMLElement {
             console_functions_log(event.currentTarget.files);
             //@ts-ignore
             const inputElement = event.currentTarget;
-            const files = Array.from(inputElement.files);
-            console_functions_log(files[0]);
+            const fileUploaded = Array.from(inputElement.files)[0];
+            const componentHost = getComponentHost(event.currentTarget);
+            showAudioPlayer(componentHost, fileUploaded);
         });
     }
     /**
@@ -859,15 +848,46 @@ class AudioPlayer extends HTMLElement {
      */
     static get observedAttributes() {
         //We indicate the list of attributes that the custom element wants to observe for changes.
-        return [""];
+        return [
+            "title",
+            "is-playing",
+            "current-time",
+            "total-time",
+            "volume",
+            "is-muted",
+        ];
     }
+    get title() {
+        return this.getAttribute("title");
+    }
+    set title(value) { }
+    get isPlaying() {
+        return this.getAttribute("is-playing");
+    }
+    set isPlaying(value) { }
+    get currentTime() {
+        return this.getAttribute("current-time");
+    }
+    set currentTime(value) { }
+    get totalTime() {
+        return this.getAttribute("total-time");
+    }
+    set totalTime(value) { }
+    get volume() {
+        return this.getAttribute("volume");
+    }
+    set volume(value) { }
+    get isMuted() {
+        return this.getAttribute("is-muted");
+    }
+    set isMuted(value) { }
     connectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
         const inputFile = selectQuery(".index__file-input", this.shadowRoot);
         console_functions_log(labelDropZoneArea);
         labelDropZoneArea.addEventListener("dragover", this.handleDragOver);
         labelDropZoneArea.addEventListener("dragleave", this.handleDragLeave);
-        labelDropZoneArea.addEventListener("drop", this.uploadAudio);
+        labelDropZoneArea.addEventListener("drop", this.uploadAudioDrop);
         inputFile.addEventListener("change", this.uploadAudioInput);
     }
     disconnectedCallback() {
@@ -876,12 +896,35 @@ class AudioPlayer extends HTMLElement {
         console_functions_log(labelDropZoneArea);
         labelDropZoneArea.removeEventListener("dragover", this.handleDragOver);
         labelDropZoneArea.removeEventListener("dragleave", this.handleDragLeave);
-        labelDropZoneArea.removeEventListener("drop", this.uploadAudio);
+        labelDropZoneArea.removeEventListener("drop", this.uploadAudioDrop);
         inputFile.removeEventListener("change", this.uploadAudioInput);
     }
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
-            case "": {
+            case "title": {
+                console_functions_log({ name, oldValue, newValue });
+                const titleOfPlayer = selectQuery(".index__audio-player--name", this.shadowRoot);
+                titleOfPlayer.textContent = newValue;
+                //…
+                break;
+            }
+            case "is-playing": {
+                //…
+                break;
+            }
+            case "current-time": {
+                //…
+                break;
+            }
+            case "total-time": {
+                //…
+                break;
+            }
+            case "volume": {
+                //…
+                break;
+            }
+            case "is-muted": {
                 //…
                 break;
             }
@@ -891,6 +934,30 @@ class AudioPlayer extends HTMLElement {
     }
 }
 customElements.define("audio-player", AudioPlayer);
+function checkFileType(fileUploaded, typeExpected) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { lastModified, name, type, size } = fileUploaded;
+        const fileType = splitString(type, "/")[0];
+        return fileType === typeExpected;
+    });
+}
+function showAudioPlayer(componentHost, fileUploaded) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console_functions_log("test", { componentHost }, { fileUploaded });
+        const labelDropZoneArea = selectQuery(".index__file-label", componentHost);
+        const audioPlayer = selectQuery(".index__audio-player", componentHost);
+        const isAnAudioFile = yield checkFileType(fileUploaded, "audio");
+        if (isAnAudioFile) {
+            console_functions_log("showing");
+            console_functions_log(labelDropZoneArea, audioPlayer);
+            addClass(labelDropZoneArea, "hide");
+            removeClass(audioPlayer, "hide");
+        }
+        else {
+            removeClass(labelDropZoneArea, "active");
+        }
+    });
+}
 
 ;// CONCATENATED MODULE: ./src/index.ts
 //Components

@@ -23,3 +23,7 @@ export function transformAudioFileToBase64Text(
     });
   });
 }
+
+export function checkFileType(file, typeWanted) {
+  return file;
+}

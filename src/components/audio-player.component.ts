@@ -443,10 +443,6 @@ export class AudioPlayer extends HTMLElement {
     shadowRoot.appendChild(clonedTemplate);
   }
 
-  getShadowRoot() {
-    return this.shadowRoot;
-  }
-
   /**
    * Methods to handle events
    */
@@ -465,56 +461,82 @@ export class AudioPlayer extends HTMLElement {
    * @param {DragEvent} event - The drop event.
    * @returns {any} - Returns nothing.
    */
-  async uploadAudio(event: DragEvent): Promise<any> {
+  async uploadAudioDrop(event: DragEvent): Promise<any> {
     log(event);
     event.preventDefault();
 
-    const labelDropZoneArea: EventTarget = event.currentTarget;
-
     const fileUploaded: File = event.dataTransfer.files[0];
 
-    const { lastModified, name, type, size }: File = fileUploaded;
+    const componentHost = getComponentHost(event.currentTarget);
 
-    const fileType: string = splitString(type, "/")[0];
+    showAudioPlayer(componentHost, fileUploaded);
 
-    const isNotAudioFile: boolean = fileType !== "audio";
-    if (isNotAudioFile) {
-      log(
-        "%cFile uploaded is not an audio!",
-        "background: crimson; padding: 5px; "
-      );
-      //@ts-ignore
-      event.target.value = "";
-      return;
-    }
-    log({ lastModified, name, type, size });
+    // //@ts-ignore
+    // const shadowRoot: ShadowRoot = getComponentHost(labelDropZoneArea);
 
-    //@ts-ignore
-    const shadowRoot: ShadowRoot = getComponentHost(labelDropZoneArea);
-
-    const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
-
-    removeClass(customAudioPlayer, "hide");
-    addClass(labelDropZoneArea, "hide");
+    // const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
+    // removeClass(customAudioPlayer, "hide");
+    // addClass(labelDropZoneArea, "hide");
   }
 
   async uploadAudioInput(event: Event): Promise<any> {
     //@ts-ignore
     log(event.currentTarget.files);
+
     //@ts-ignore
     const inputElement: HTMLInputElement = event.currentTarget;
 
-    const files = Array.from(inputElement.files);
+    const fileUploaded = Array.from(inputElement.files)[0];
 
-    log(files[0]);
+    const componentHost = getComponentHost(event.currentTarget);
+
+    showAudioPlayer(componentHost, fileUploaded);
   }
+
   /**
    *Static method used to store the array of all the custom attributes of the component
    */
   static get observedAttributes() {
     //We indicate the list of attributes that the custom element wants to observe for changes.
-    return [""];
+    return [
+      "title",
+      "is-playing",
+      "current-time",
+      "total-time",
+      "volume",
+      "is-muted",
+    ];
   }
+
+  get title() {
+    return this.getAttribute("title");
+  }
+  set title(value) {}
+
+  get isPlaying() {
+    return this.getAttribute("is-playing");
+  }
+  set isPlaying(value) {}
+
+  get currentTime() {
+    return this.getAttribute("current-time");
+  }
+  set currentTime(value) {}
+
+  get totalTime() {
+    return this.getAttribute("total-time");
+  }
+  set totalTime(value) {}
+
+  get volume() {
+    return this.getAttribute("volume");
+  }
+  set volume(value) {}
+
+  get isMuted() {
+    return this.getAttribute("is-muted");
+  }
+  set isMuted(value) {}
 
   connectedCallback() {
     const labelDropZoneArea: HTMLLabelElement = selectQuery(
@@ -531,7 +553,7 @@ export class AudioPlayer extends HTMLElement {
     labelDropZoneArea.addEventListener("dragover", this.handleDragOver);
     labelDropZoneArea.addEventListener("dragleave", this.handleDragLeave);
 
-    labelDropZoneArea.addEventListener("drop", this.uploadAudio);
+    labelDropZoneArea.addEventListener("drop", this.uploadAudioDrop);
     inputFile.addEventListener("change", this.uploadAudioInput);
   }
 
@@ -549,13 +571,40 @@ export class AudioPlayer extends HTMLElement {
     labelDropZoneArea.removeEventListener("dragover", this.handleDragOver);
     labelDropZoneArea.removeEventListener("dragleave", this.handleDragLeave);
 
-    labelDropZoneArea.removeEventListener("drop", this.uploadAudio);
+    labelDropZoneArea.removeEventListener("drop", this.uploadAudioDrop);
     inputFile.removeEventListener("change", this.uploadAudioInput);
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     switch (name) {
-      case "": {
+      case "title": {
+        log({ name, oldValue, newValue });
+        const titleOfPlayer: HTMLHeadingElement = selectQuery(
+          ".index__audio-player--name",
+          this.shadowRoot
+        );
+
+        titleOfPlayer.textContent = newValue;
+        //…
+        break;
+      }
+      case "is-playing": {
+        //…
+        break;
+      }
+      case "current-time": {
+        //…
+        break;
+      }
+      case "total-time": {
+        //…
+        break;
+      }
+      case "volume": {
+        //…
+        break;
+      }
+      case "is-muted": {
         //…
         break;
       }
@@ -566,3 +615,28 @@ export class AudioPlayer extends HTMLElement {
 }
 
 customElements.define("audio-player", AudioPlayer);
+
+async function checkFileType(fileUploaded: File, typeExpected: string) {
+  const { lastModified, name, type, size }: File = fileUploaded;
+
+  const fileType: string = splitString(type, "/")[0];
+
+  return fileType === typeExpected;
+}
+
+async function showAudioPlayer(componentHost, fileUploaded) {
+  log("test", { componentHost }, { fileUploaded });
+  const labelDropZoneArea = selectQuery(".index__file-label", componentHost);
+  const audioPlayer = selectQuery(".index__audio-player", componentHost);
+
+  const isAnAudioFile = await checkFileType(fileUploaded, "audio");
+
+  if (isAnAudioFile) {
+    log("showing");
+    log(labelDropZoneArea, audioPlayer);
+    addClass(labelDropZoneArea, "hide");
+    removeClass(audioPlayer, "hide");
+  } else {
+    removeClass(labelDropZoneArea, "active");
+  }
+}
