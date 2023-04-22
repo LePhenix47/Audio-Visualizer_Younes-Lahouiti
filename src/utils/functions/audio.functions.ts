@@ -42,7 +42,7 @@ export function getAudioCurrentTime(audio: HTMLAudioElement): number {
 }
 
 /**
- * Get the duration of an audio file in seconds
+ * Gets the duration of an audio file in seconds
  *
  * @param {HTMLAudioElement} audio - The audio element to get the duration from
  * @returns {number} The duration of the audio file in seconds (returns 0 if it's not available)
@@ -56,21 +56,6 @@ export function getAudioTotalTime(audio: HTMLAudioElement): number {
  * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
  * @returns Boolean value telling whether or not the audio has ended
  */
-export function checkIfAudioEnd(audio: HTMLAudioElement): boolean {
+export function checkIfAudioEnded(audio: HTMLAudioElement): boolean {
   return audio.ended;
-}
-
-export async function transformFileToBase64Text(audioFile: File) {
-  const reader: FileReader = new FileReader();
-
-  reader.readAsDataURL(audioFile);
-
-  reader.addEventListener("load", async (e: ProgressEvent<FileReader>) => {
-    let base64MediaString: string | ArrayBuffer = reader.result;
-
-    // @ts-ignore
-    let audio: HTMLAudioElement = new Audio(base64MediaString);
-
-    return audio;
-  });
 }

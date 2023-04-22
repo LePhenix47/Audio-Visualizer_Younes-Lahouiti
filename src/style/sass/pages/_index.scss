@@ -98,7 +98,13 @@
         }
 
         &--component {
-            outline: 2px solid red;
+            width: 50%;
+
+            @include center-flex-column;
+
+            @include mobile-only {
+                width: 80%;
+            }
         }
 
         &--name {
