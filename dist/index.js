@@ -435,10 +435,10 @@ function transformFileToBase64Text(audioFile) {
             /**
              * Test - BEGIN
              */
-            audio.classList.add("index__audio--source");
+            addClass(audio, "index__audio--source");
             customAudioPlayer.appendChild(audio);
-            const test = selectQuery("audio");
-            console_functions_log(test);
+            const test = selectQuery(".index__audio--source");
+            console_functions_log(test.duration);
             /**
              * Test - END
              */

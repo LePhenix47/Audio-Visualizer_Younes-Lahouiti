@@ -84,11 +84,11 @@ async function transformFileToBase64Text(audioFile: File) {
     /**
      * Test - BEGIN
      */
-    audio.classList.add("index__audio--source");
+    addClass(audio, "index__audio--source");
     customAudioPlayer.appendChild(audio);
 
-    const test = selectQuery("audio");
-    log(test);
+    const test: HTMLAudioElement = selectQuery(".index__audio--source");
+    log(test.duration);
     /**
      * Test - END
      */
