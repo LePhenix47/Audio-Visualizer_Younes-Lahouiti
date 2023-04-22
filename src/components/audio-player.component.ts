@@ -1,3 +1,13 @@
+import { log } from "../utils/functions/console.functions";
+import {
+  addClass,
+  getComponentHost,
+  removeClass,
+  selectQuery,
+  selectQueryAll,
+} from "../utils/functions/dom.functions";
+import { splitString } from "../utils/functions/string.functions";
+
 const audioPlayerTemplateElement = document.createElement("template");
 
 const jsClasses = /* css*/ `
@@ -11,6 +21,10 @@ const jsClasses = /* css*/ `
 
 .active>.index__svg {
     color: var(--color-primary) !important
+}
+
+.active.index__file-label::before{
+    color:  var(--color-primary) !important
 }
 
 .hide {
@@ -183,8 +197,9 @@ const audioPlayerTemplateStyle = /*css*/ `
     position: relative
 }
 
-.index__file-label:before {
+.index__file-label::before {
     content: "Upload an audio file";
+    color: var(--bg-tertiary);
     position: absolute;
     top: 25px
 }
@@ -384,6 +399,9 @@ const audioPlayerTemplateHTMLContent = /*html */ `
                         <svg xmlns="http://www.w3.org/2000/svg" class="hide" fill="currentColor" viewBox="0 0 320 512" height="16" width="16">
                             <path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/>
                         </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="hide" fill="currentColor" viewBox="0 0 512 512" height="16" width="16">
+                            <path d="M125.7 160H176c17.7 0 32 14.3 32 32s-14.3 32-32 32H48c-17.7 0-32-14.3-32-32V64c0-17.7 14.3-32 32-32s32 14.3 32 32v51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"/>
+                    </svg>
                     </button>
                 </div>
                 <div class="index__audio-player--volume">
@@ -425,6 +443,71 @@ export class AudioPlayer extends HTMLElement {
     shadowRoot.appendChild(clonedTemplate);
   }
 
+  getShadowRoot() {
+    return this.shadowRoot;
+  }
+
+  /**
+   * Methods to handle events
+   */
+  handleDragOver(event: DragEvent): void {
+    event.preventDefault();
+    addClass(event.currentTarget, "active");
+  }
+
+  handleDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    removeClass(event.currentTarget, "active");
+  }
+
+  /**
+   * Handles uploading audio files from a drop event.
+   * @param {DragEvent} event - The drop event.
+   * @returns {any} - Returns nothing.
+   */
+  async uploadAudio(event: DragEvent): Promise<any> {
+    log(event);
+    event.preventDefault();
+
+    const labelDropZoneArea: EventTarget = event.currentTarget;
+
+    const fileUploaded: File = event.dataTransfer.files[0];
+
+    const { lastModified, name, type, size }: File = fileUploaded;
+
+    const fileType: string = splitString(type, "/")[0];
+
+    const isNotAudioFile: boolean = fileType !== "audio";
+    if (isNotAudioFile) {
+      log(
+        "%cFile uploaded is not an audio!",
+        "background: crimson; padding: 5px; "
+      );
+      //@ts-ignore
+      event.target.value = "";
+      return;
+    }
+    log({ lastModified, name, type, size });
+
+    //@ts-ignore
+    const shadowRoot: ShadowRoot = getComponentHost(labelDropZoneArea);
+
+    const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
+
+    removeClass(customAudioPlayer, "hide");
+    addClass(labelDropZoneArea, "hide");
+  }
+
+  async uploadAudioInput(event: Event): Promise<any> {
+    //@ts-ignore
+    log(event.currentTarget.files);
+    //@ts-ignore
+    const inputElement: HTMLInputElement = event.currentTarget;
+
+    const files = Array.from(inputElement.files);
+
+    log(files[0]);
+  }
   /**
    *Static method used to store the array of all the custom attributes of the component
    */
@@ -433,11 +516,44 @@ export class AudioPlayer extends HTMLElement {
     return [""];
   }
 
-  connectedCallback() {}
+  connectedCallback() {
+    const labelDropZoneArea: HTMLLabelElement = selectQuery(
+      ".index__file-label",
+      this.shadowRoot
+    );
 
-  disconnectedCallback() {}
+    const inputFile: HTMLInputElement = selectQuery(
+      ".index__file-input",
+      this.shadowRoot
+    );
+    log(labelDropZoneArea);
 
-  attributeChangedCallback(name, oldValue, newValue) {
+    labelDropZoneArea.addEventListener("dragover", this.handleDragOver);
+    labelDropZoneArea.addEventListener("dragleave", this.handleDragLeave);
+
+    labelDropZoneArea.addEventListener("drop", this.uploadAudio);
+    inputFile.addEventListener("change", this.uploadAudioInput);
+  }
+
+  disconnectedCallback() {
+    const labelDropZoneArea: HTMLLabelElement = selectQuery(
+      ".index__file-label",
+      this.shadowRoot
+    );
+    const inputFile: HTMLInputElement = selectQuery(
+      ".index__file-input",
+      this.shadowRoot
+    );
+    log(labelDropZoneArea);
+
+    labelDropZoneArea.removeEventListener("dragover", this.handleDragOver);
+    labelDropZoneArea.removeEventListener("dragleave", this.handleDragLeave);
+
+    labelDropZoneArea.removeEventListener("drop", this.uploadAudio);
+    inputFile.removeEventListener("change", this.uploadAudioInput);
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     switch (name) {
       case "": {
         //…

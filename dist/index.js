@@ -15,7 +15,7 @@ const { log: console_functions_log, error, table, time, timeEnd, timeStamp, time
  * A simplified version of `document.querySelector()`
  *
  * @param {string} query - HTML Element to select
- * @param {HTMLElement} container - HTML Element to select the query from
+ * @param {any} container - HTML Element to select the query from
  * @returns  - The element selected or `null` if the element doesn't exist
  */
 function selectQuery(query, container) {
@@ -37,8 +37,8 @@ function selectQuery(query, container) {
  * A simplified version of `document.querySelectorAll()`
  *
  * @param {string} query - HTML Element to select
- * @param {HTMLElement} container - HTML Element to select the query from
- * @returns {HTMLElement[]|null} - An array with all the elements selected or `null` if the element doesn't exist
+ * @param {any} container - HTML Element to select the query from
+ * @returns {any[]|null} - An array with all the elements selected or `null` if the element doesn't exist
  */
 function selectQueryAll(query, container) {
     if (!container) {
@@ -364,6 +364,18 @@ function toPercent(number) {
 }
 
 ;// CONCATENATED MODULE: ./src/components/audio-player.component.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
 const audioPlayerTemplateElement = document.createElement("template");
 const jsClasses = /* css*/ `
 .hide{
@@ -376,6 +388,10 @@ const jsClasses = /* css*/ `
 
 .active>.index__svg {
     color: var(--color-primary) !important
+}
+
+.active.index__file-label::before{
+    color:  var(--color-primary) !important
 }
 
 .hide {
@@ -546,8 +562,9 @@ const audioPlayerTemplateStyle = /*css*/ `
     position: relative
 }
 
-.index__file-label:before {
+.index__file-label::before {
     content: "Upload an audio file";
+    color: var(--bg-tertiary);
     position: absolute;
     top: 25px
 }
@@ -746,6 +763,9 @@ const audioPlayerTemplateHTMLContent = /*html */ `
                         <svg xmlns="http://www.w3.org/2000/svg" class="hide" fill="currentColor" viewBox="0 0 320 512" height="16" width="16">
                             <path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/>
                         </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="hide" fill="currentColor" viewBox="0 0 512 512" height="16" width="16">
+                            <path d="M125.7 160H176c17.7 0 32 14.3 32 32s-14.3 32-32 32H48c-17.7 0-32-14.3-32-32V64c0-17.7 14.3-32 32-32s32 14.3 32 32v51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"/>
+                    </svg>
                     </button>
                 </div>
                 <div class="index__audio-player--volume">
@@ -782,6 +802,58 @@ class AudioPlayer extends HTMLElement {
         //We add it as a child of our web component
         shadowRoot.appendChild(clonedTemplate);
     }
+    getShadowRoot() {
+        return this.shadowRoot;
+    }
+    /**
+     * Methods to handle events
+     */
+    handleDragOver(event) {
+        event.preventDefault();
+        addClass(event.currentTarget, "active");
+    }
+    handleDragLeave(event) {
+        event.preventDefault();
+        removeClass(event.currentTarget, "active");
+    }
+    /**
+     * Handles uploading audio files from a drop event.
+     * @param {DragEvent} event - The drop event.
+     * @returns {any} - Returns nothing.
+     */
+    uploadAudio(event) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console_functions_log(event);
+            event.preventDefault();
+            const labelDropZoneArea = event.currentTarget;
+            const fileUploaded = event.dataTransfer.files[0];
+            const { lastModified, name, type, size } = fileUploaded;
+            const fileType = splitString(type, "/")[0];
+            const isNotAudioFile = fileType !== "audio";
+            if (isNotAudioFile) {
+                console_functions_log("%cFile uploaded is not an audio!", "background: crimson; padding: 5px; ");
+                //@ts-ignore
+                event.target.value = "";
+                return;
+            }
+            console_functions_log({ lastModified, name, type, size });
+            //@ts-ignore
+            const shadowRoot = getComponentHost(labelDropZoneArea);
+            const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
+            removeClass(customAudioPlayer, "hide");
+            addClass(labelDropZoneArea, "hide");
+        });
+    }
+    uploadAudioInput(event) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //@ts-ignore
+            console_functions_log(event.currentTarget.files);
+            //@ts-ignore
+            const inputElement = event.currentTarget;
+            const files = Array.from(inputElement.files);
+            console_functions_log(files[0]);
+        });
+    }
     /**
      *Static method used to store the array of all the custom attributes of the component
      */
@@ -789,8 +861,24 @@ class AudioPlayer extends HTMLElement {
         //We indicate the list of attributes that the custom element wants to observe for changes.
         return [""];
     }
-    connectedCallback() { }
-    disconnectedCallback() { }
+    connectedCallback() {
+        const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
+        const inputFile = selectQuery(".index__file-input", this.shadowRoot);
+        console_functions_log(labelDropZoneArea);
+        labelDropZoneArea.addEventListener("dragover", this.handleDragOver);
+        labelDropZoneArea.addEventListener("dragleave", this.handleDragLeave);
+        labelDropZoneArea.addEventListener("drop", this.uploadAudio);
+        inputFile.addEventListener("change", this.uploadAudioInput);
+    }
+    disconnectedCallback() {
+        const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
+        const inputFile = selectQuery(".index__file-input", this.shadowRoot);
+        console_functions_log(labelDropZoneArea);
+        labelDropZoneArea.removeEventListener("dragover", this.handleDragOver);
+        labelDropZoneArea.removeEventListener("dragleave", this.handleDragLeave);
+        labelDropZoneArea.removeEventListener("drop", this.uploadAudio);
+        inputFile.removeEventListener("change", this.uploadAudioInput);
+    }
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
             case "": {
@@ -805,71 +893,8 @@ class AudioPlayer extends HTMLElement {
 customElements.define("audio-player", AudioPlayer);
 
 ;// CONCATENATED MODULE: ./src/index.ts
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-//Utils
-
-
-
 //Components
 
-//Test, to be changed
-const customAudioPlayerComponent = selectQuery("audio-player");
-console_functions_log(customAudioPlayerComponent);
-const labelDropZoneArea = selectQuery(".index__file-label", customAudioPlayerComponent);
-console_functions_log(labelDropZoneArea);
-const bodyDocument = selectQuery("body");
-labelDropZoneArea.addEventListener("dragover", handleDragOver);
-/**
- * Handles the dragover event on the dropzone area.
- * Adds the 'active' class to the dropzone area.
- * @param {DragEvent} e - The DragEvent object.
- * @returns {void}
- */
-function handleDragOver(e) {
-    e.preventDefault();
-    addClass(labelDropZoneArea, "active");
-}
-labelDropZoneArea.addEventListener("dragleave", handleDragLeave);
-/**
- * Handles the dragleave event on the dropzone area.
- * Removes the 'active' class from the dropzone area.
- * @param {DragEvent} e - The DragEvent object.
- * @returns {void}
- */
-function handleDragLeave(e) {
-    e.preventDefault();
-    removeClass(labelDropZoneArea, "active");
-}
-labelDropZoneArea.addEventListener("drop", uploadAudio);
-/**
- * Handles uploading audio files from a drop event.
- * @param {DragEvent} event - The drop event.
- * @returns {any} - Returns nothing.
- */
-function uploadAudio(event) {
-    return __awaiter(this, void 0, void 0, function* () {
-        event.preventDefault();
-        const fileUploaded = event.dataTransfer.files[0];
-        const { lastModified, name, type, size } = fileUploaded;
-        const fileType = splitString(type, "/")[0];
-        const isNotAudioFile = fileType !== "audio";
-        if (isNotAudioFile) {
-            console_functions_log("%cFile uploaded is not an audio!", "background: crimson; padding: 5px; ");
-            return;
-        }
-        console_functions_log({ lastModified, name, type, size });
-        // removeClass(customAudioPlayer, "hide");
-        addClass(labelDropZoneArea, "hide");
-    });
-}
 
 })();
 

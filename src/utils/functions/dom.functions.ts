@@ -2,11 +2,11 @@
  * A simplified version of `document.querySelector()`
  *
  * @param {string} query - HTML Element to select
- * @param {HTMLElement} container - HTML Element to select the query from
+ * @param {any} container - HTML Element to select the query from
  * @returns  - The element selected or `null` if the element doesn't exist
  */
 
-export function selectQuery(query: string, container?: HTMLElement): any {
+export function selectQuery(query: string, container?: any): any {
   if (!container) {
     return document.querySelector(query);
   }
@@ -27,10 +27,10 @@ export function selectQuery(query: string, container?: HTMLElement): any {
  * A simplified version of `document.querySelectorAll()`
  *
  * @param {string} query - HTML Element to select
- * @param {HTMLElement} container - HTML Element to select the query from
- * @returns {HTMLElement[]|null} - An array with all the elements selected or `null` if the element doesn't exist
+ * @param {any} container - HTML Element to select the query from
+ * @returns {any[]|null} - An array with all the elements selected or `null` if the element doesn't exist
  */
-export function selectQueryAll(query: string, container?: HTMLElement): any {
+export function selectQueryAll(query: string, container?: any): any[] {
   if (!container) {
     return Array.from(document.querySelectorAll(query));
   }
@@ -195,10 +195,7 @@ export function addClass(element: any, className: string): void {
  * @param {string} className - The class name to remove
  * @returns {void}
  */
-export function removeClass(
-  element: { classList: { remove: (arg0: any) => void } },
-  className: any
-): void {
+export function removeClass(element: any, className: string): void {
   element.classList.remove(className);
 }
 
