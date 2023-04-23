@@ -4,20 +4,27 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
 (() => {
 
+;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
+/**
+ * The console methods are exported as separate methods through destructuring
+ */
+const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
+
 ;// CONCATENATED MODULE: ./src/utils/functions/audio.functions.ts
+
 /**
  * Plays the audio element
  * @param {HTMLAudioElement} audio - The HTML audio element to be played
  */
 function playAudio(audio) {
-    audio.play();
+    audio === null || audio === void 0 ? void 0 : audio.play();
 }
 /**
  * Pauses the audio element
  * @param {HTMLAudioElement} audio - The HTML audio element to be paused
  */
 function pauseAudio(audio) {
-    audio.pause();
+    audio === null || audio === void 0 ? void 0 : audio.pause();
 }
 /**
  * Sets the volume of an audio element
@@ -41,7 +48,7 @@ function setTimestampAudio(audio, time) {
  * @returns {number} The current time of the audio element (in seconds)
  */
 function getAudioCurrentTime(audio) {
-    return audio.currentTime;
+    return audio === null || audio === void 0 ? void 0 : audio.currentTime;
 }
 /**
  * Gets the duration of an audio file in seconds
@@ -50,7 +57,7 @@ function getAudioCurrentTime(audio) {
  * @returns {number} The duration of the audio file in seconds (returns 0 if it's not available)
  */
 function getAudioTotalTime(audio) {
-    return isNaN(audio.duration) ? 0 : audio.duration;
+    return isNaN(audio === null || audio === void 0 ? void 0 : audio.duration) ? 0 : audio === null || audio === void 0 ? void 0 : audio.duration;
 }
 /**
  * Checks if an audio element has ended
@@ -58,14 +65,50 @@ function getAudioTotalTime(audio) {
  * @returns Boolean value telling whether or not the audio has ended
  */
 function checkIfAudioEnded(audio) {
-    return audio.ended;
+    return audio === null || audio === void 0 ? void 0 : audio.ended;
 }
-
-;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
 /**
- * The console methods are exported as separate methods through destructuring
+ * Formats a given amount of seconds into a time object containing formatted hours, minutes and seconds
+ * If the time is over an hour but under 10 minutes, the minutes are also formatted
+ *
+ * @param {number} seconds - The amount of seconds to format
+ * @returns {{seconds: string, minutes: string, hours: string}} - A time object containing formatted hours, minutes and seconds
  */
-const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
+function formatTimeValues(seconds) {
+    // Calculate the unformatted minutes and seconds
+    const unformattedSeconds = Math.trunc(seconds % 60);
+    const unformattedMinutes = Math.trunc((seconds / 60) % 60);
+    const unformattedHours = Math.trunc(seconds / 3600);
+    // Format the seconds
+    const formattedSeconds = unformattedSeconds >= 10
+        ? unformattedSeconds.toString()
+        : `0${unformattedSeconds}`;
+    // Format the minutes
+    let formattedMinutes = unformattedMinutes.toString();
+    //Format the hours
+    const formattedHours = unformattedHours.toString();
+    // Check if the time is over an hour and under 10 minutes
+    const isOverAnHour = unformattedHours > 0;
+    const isUnderTenMinutes = unformattedMinutes < 10;
+    // If the time is over an hour but under 10 minutes, format the minutes
+    if (isOverAnHour && isUnderTenMinutes) {
+        formattedMinutes =
+            unformattedMinutes > 10
+                ? unformattedMinutes.toString()
+                : `0${unformattedMinutes}`;
+    }
+    console_functions_log({
+        hours: formattedHours,
+        minutes: formattedMinutes,
+        seconds: formattedSeconds,
+    });
+    // Return the formatted time object
+    return {
+        hours: formattedHours,
+        minutes: formattedMinutes,
+        seconds: formattedSeconds,
+    };
+}
 
 ;// CONCATENATED MODULE: ./src/utils/functions/dom.functions.ts
 /**
@@ -194,6 +237,17 @@ function modifyAttribute(element, property, value) {
     element.setAttribute(property, value.toString());
 }
 /**
+ * Retrieves the value of the specified attribute from the given element
+ *
+ * @param {string} attributeName - The name of the attribute to retrieve
+ * @param {any} element - The element from which to retrieve the attribute
+ *
+ * @returns {string} The value of the attribute
+ */
+function getAttribute(attributeName, element) {
+    return element.getAttribute(attributeName);
+}
+/**
  * Removes an attribute from an element and sets a new attribute in its place.
  *
  * @param {any} element - The element from which to remove the attribute.
@@ -250,16 +304,6 @@ function replaceClass(element, oldClassName, newClassName) {
 }
 
 ;// CONCATENATED MODULE: ./src/utils/functions/file.functions.ts
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
 /**
  * Transforms an audio file into a base64-encoded string
  *
@@ -297,21 +341,22 @@ function transformAudioFileToBase64Text(audioFile) {
  * @throws {string} - An error message if the transformAudioFileToBase64Text() function throws an error
  *
  */
-function createAudioElement(audioFile) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // Transform the audio file to a Base64 encoded string
-            const base64AudioString = yield transformAudioFileToBase64Text(audioFile);
-            // Create a new HTMLAudioElement with the encoded string as its source
-            const audioElement = new Audio(base64AudioString);
-            return audioElement;
-        }
-        catch (functionError) {
-            // Log any errors to the console
-            error(functionError);
-        }
-    });
-}
+// export async function createAudioElement(
+//   audioFile: File
+// ): Promise<HTMLAudioElement> {
+//   try {
+//     // Transform the audio file to a Base64 encoded string
+//     const base64AudioString: string = await transformAudioFileToBase64Text(
+//       audioFile
+//     );
+//     // Create a new HTMLAudioElement with the encoded string as its source
+//     const audioElement: HTMLAudioElement = new Audio(base64AudioString);
+//     return audioElement;
+//   } catch (functionError) {
+//     // Log any errors to the console
+//     error(functionError);
+//   }
+// }
 
 ;// CONCATENATED MODULE: ./src/utils/functions/string.functions.ts
 
@@ -492,7 +537,7 @@ function toPercent(number) {
 }
 
 ;// CONCATENATED MODULE: ./src/components/audio-player.component.ts
-var audio_player_component_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -876,6 +921,7 @@ const audioPlayerTemplateHTMLContent = /*html */ `
 
         <section class="index__audio-player hide">
             <canvas class="index__canvas index__canvas--round"></canvas>
+            <audio preload="auto" src=""></audio> 
             <h2 class="index__audio-player--name">Music title</h2>
             <div class="index__audio-player--progress">
                 <div class="index__audio-player--progress-bar">
@@ -951,23 +997,16 @@ class AudioPlayer extends HTMLElement {
      * @returns {any} - Returns nothing.
      */
     uploadAudioDrop(event) {
-        return audio_player_component_awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
             console_functions_log(event);
             event.preventDefault();
             const fileUploaded = event.dataTransfer.files[0];
             const componentHost = getComponentHost(event.currentTarget);
             showAudioPlayer(componentHost, fileUploaded);
-            // //@ts-ignore
-            // const shadowRoot: ShadowRoot = getComponentHost(labelDropZoneArea);
-            // const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
-            // removeClass(customAudioPlayer, "hide");
-            // addClass(labelDropZoneArea, "hide");
         });
     }
     uploadAudioInput(event) {
-        return audio_player_component_awaiter(this, void 0, void 0, function* () {
-            //@ts-ignore
-            console_functions_log(event.currentTarget.files);
+        return __awaiter(this, void 0, void 0, function* () {
             //@ts-ignore
             const inputElement = event.currentTarget;
             const fileUploaded = Array.from(inputElement.files)[0];
@@ -992,46 +1031,71 @@ class AudioPlayer extends HTMLElement {
     get title() {
         return this.getAttribute("title");
     }
-    set title(value) { }
+    set title(value) {
+        this.setAttribute("title", value);
+    }
     get isPlaying() {
         return this.getAttribute("is-playing");
     }
-    set isPlaying(value) { }
+    set isPlaying(value) {
+        this.setAttribute("is-playing", value);
+    }
     get currentTime() {
         return this.getAttribute("current-time");
     }
-    set currentTime(value) { }
+    set currentTime(value) {
+        this.setAttribute("current-time", value);
+    }
     get totalTime() {
         return this.getAttribute("total-time");
     }
-    set totalTime(value) { }
+    set totalTime(value) {
+        this.setAttribute("total-time", value);
+    }
     get volume() {
         return this.getAttribute("volume");
     }
-    set volume(value) { }
+    set volume(value) {
+        this.setAttribute("volume", value);
+    }
     get isMuted() {
         return this.getAttribute("is-muted");
     }
-    set isMuted(value) { }
+    set isMuted(value) {
+        this.setAttribute("is-muted", value);
+    }
     connectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
-        const inputFile = selectQuery(".index__file-input", this.shadowRoot);
-        console_functions_log(labelDropZoneArea);
         labelDropZoneArea.addEventListener("dragover", this.handleDragOver);
         labelDropZoneArea.addEventListener("dragleave", this.handleDragLeave);
         labelDropZoneArea.addEventListener("drop", this.uploadAudioDrop);
+        const inputFile = selectQuery(".index__file-input", this.shadowRoot);
         inputFile.addEventListener("change", this.uploadAudioInput);
+        const playPauseAudioButton = selectQuery(".index__audio-player--button", this.shadowRoot);
+        // playPauseAudioButton.addEventListener("click", )
+        const audioSource = selectQuery("audio", this.shadowRoot);
+        audioSource.addEventListener("timeupdate", (e) => {
+            console_functions_log("timeupdate!", e);
+            const seconds = Math.trunc(getAudioCurrentTime(audioSource));
+            this.currentTime = seconds.toString();
+        });
     }
     disconnectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
-        const inputFile = selectQuery(".index__file-input", this.shadowRoot);
-        console_functions_log(labelDropZoneArea);
         labelDropZoneArea.removeEventListener("dragover", this.handleDragOver);
         labelDropZoneArea.removeEventListener("dragleave", this.handleDragLeave);
         labelDropZoneArea.removeEventListener("drop", this.uploadAudioDrop);
+        const inputFile = selectQuery(".index__file-input", this.shadowRoot);
         inputFile.removeEventListener("change", this.uploadAudioInput);
+        const playPauseAudioButton = selectQuery(".index__audio-player--button", this.shadowRoot);
+        // playPauseAudioButton.removeEventListener("click", )
+        const audioSource = selectQuery("audio", this.shadowRoot);
     }
     attributeChangedCallback(name, oldValue, newValue) {
+        const audioSourceElement = selectQuery("audio", this.shadowRoot);
+        const webComponent = selectQuery("audio-player");
+        const mp3PlayerSection = selectQuery(".index__audio-player", this.shadowRoot);
+        audioSourceElement.addEventListener("loadeddata", () => { });
         switch (name) {
             case "title": {
                 console_functions_log({ name, oldValue, newValue });
@@ -1041,14 +1105,43 @@ class AudioPlayer extends HTMLElement {
                 break;
             }
             case "is-playing": {
+                const isPlaying = newValue === "true";
+                if (isPlaying) {
+                    playAudio(audioSourceElement);
+                }
+                else {
+                    pauseAudio(audioSourceElement);
+                }
                 //…
                 break;
             }
             case "current-time": {
+                const currentTimeParagraph = selectQuery(".index__audio-player--current-time", mp3PlayerSection);
+                const currentTimeInSeconds = Number(newValue);
+                const { seconds, minutes, hours, } = formatTimeValues(currentTimeInSeconds);
+                const hasHours = Number(hours) !== 0;
+                if (hasHours) {
+                    currentTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
+                }
+                else {
+                    currentTimeParagraph.textContent = `${minutes}:${seconds}`;
+                }
+                const spanProgressBar = selectQuery(".index__audio-player--current-progress", mp3PlayerSection);
+                const totalTimeInSeconds = Number(this.getAttribute("total-time"));
+                setStyleProperty("--progress", `${Math.ceil(+this.currentTime / +this.totalTime)}%`, spanProgressBar);
                 //…
                 break;
             }
             case "total-time": {
+                const totalTimeParagraph = selectQuery(".index__audio-player--total-time", mp3PlayerSection);
+                const totalTimeInSeconds = Number(newValue);
+                const { hours, minutes, seconds } = formatTimeValues(totalTimeInSeconds);
+                const hasHours = Number(hours) !== 0;
+                if (hasHours) {
+                    totalTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
+                    return;
+                }
+                totalTimeParagraph.textContent = `${minutes}:${seconds}`;
                 //…
                 break;
             }
@@ -1067,14 +1160,14 @@ class AudioPlayer extends HTMLElement {
 }
 customElements.define("audio-player", AudioPlayer);
 function checkFileType(fileUploaded, typeExpected) {
-    return audio_player_component_awaiter(this, void 0, void 0, function* () {
+    return __awaiter(this, void 0, void 0, function* () {
         const { lastModified, name, type, size } = fileUploaded;
         const fileType = splitString(type, "/")[0];
         return fileType === typeExpected;
     });
 }
 function showAudioPlayer(componentHost, fileUploaded) {
-    return audio_player_component_awaiter(this, void 0, void 0, function* () {
+    return __awaiter(this, void 0, void 0, function* () {
         console_functions_log("test", { componentHost }, { fileUploaded });
         const labelDropZoneArea = selectQuery(".index__file-label", componentHost);
         const audioPlayerElement = selectQuery(".index__audio-player", componentHost);
@@ -1088,21 +1181,20 @@ function showAudioPlayer(componentHost, fileUploaded) {
             showError();
             return;
         }
-        const audioElement = yield createAudioElement(fileUploaded);
+        const audioBase64String = yield transformAudioFileToBase64Text(fileUploaded);
         // We'll use to retrieve all the other info
-        appendChildToParent(audioElement, audioPlayerElement);
-        const audioSourceElement = selectQuery("audio", audioPlayerElement);
-        console_functions_log({ audioSourceElement }, audioSourceElement);
+        const audioSource = selectQuery("audio", componentHost);
+        audioSource.src = audioBase64String;
         showPlayer();
         //We wait for the audio to load its metadata
-        audioSourceElement.addEventListener("loadedmetadata", setHostAttributes);
+        audioSource.addEventListener("loadedmetadata", setHostAttributes);
         function showPlayer() {
             addClass(labelDropZoneArea, "hide");
             removeClass(audioPlayerElement, "hide");
         }
         function setHostAttributes() {
             const { name } = fileUploaded;
-            const totalTime = Math.floor(getAudioTotalTime(audioElement));
+            const totalTime = Math.floor(getAudioTotalTime(audioSource));
             const attributesArray = [
                 { attribute: "title", value: name },
                 { attribute: "is-playing", value: false },

@@ -155,6 +155,18 @@ export function modifyAttribute(
 }
 
 /**
+ * Retrieves the value of the specified attribute from the given element
+ *
+ * @param {string} attributeName - The name of the attribute to retrieve
+ * @param {any} element - The element from which to retrieve the attribute
+ *
+ * @returns {string} The value of the attribute
+ */
+export function getAttribute(attributeName: string, element: any): string {
+  return element.getAttribute(attributeName);
+}
+
+/**
  * Removes an attribute from an element and sets a new attribute in its place.
  *
  * @param {any} element - The element from which to remove the attribute.

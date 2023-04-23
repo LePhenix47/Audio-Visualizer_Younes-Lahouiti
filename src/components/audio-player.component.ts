@@ -1,18 +1,23 @@
-import { getAudioTotalTime } from "../utils/functions/audio.functions";
+import {
+  formatTimeValues,
+  getAudioCurrentTime,
+  getAudioTotalTime,
+  pauseAudio,
+  playAudio,
+} from "../utils/functions/audio.functions";
 import { log } from "../utils/functions/console.functions";
 import {
   addClass,
   appendChildToParent,
+  getAttribute,
   getComponentHost,
   modifyAttribute,
   removeClass,
   selectQuery,
   selectQueryAll,
+  setStyleProperty,
 } from "../utils/functions/dom.functions";
-import {
-  createAudioElement,
-  transformAudioFileToBase64Text,
-} from "../utils/functions/file.functions";
+import { transformAudioFileToBase64Text } from "../utils/functions/file.functions";
 import { splitString } from "../utils/functions/string.functions";
 
 const audioPlayerTemplateElement = document.createElement("template");
@@ -389,6 +394,7 @@ const audioPlayerTemplateHTMLContent = /*html */ `
 
         <section class="index__audio-player hide">
             <canvas class="index__canvas index__canvas--round"></canvas>
+            <audio preload="auto" src=""></audio> 
             <h2 class="index__audio-player--name">Music title</h2>
             <div class="index__audio-player--progress">
                 <div class="index__audio-player--progress-bar">
@@ -479,19 +485,9 @@ export class AudioPlayer extends HTMLElement {
     const componentHost = getComponentHost(event.currentTarget);
 
     showAudioPlayer(componentHost, fileUploaded);
-
-    // //@ts-ignore
-    // const shadowRoot: ShadowRoot = getComponentHost(labelDropZoneArea);
-
-    // const customAudioPlayer = selectQuery(".index__audio-player", shadowRoot);
-    // removeClass(customAudioPlayer, "hide");
-    // addClass(labelDropZoneArea, "hide");
   }
 
   async uploadAudioInput(event: Event): Promise<any> {
-    //@ts-ignore
-    log(event.currentTarget.files);
-
     //@ts-ignore
     const inputElement: HTMLInputElement = event.currentTarget;
 
@@ -520,32 +516,44 @@ export class AudioPlayer extends HTMLElement {
   get title() {
     return this.getAttribute("title");
   }
-  set title(value) {}
+  set title(value) {
+    this.setAttribute("title", value);
+  }
 
   get isPlaying() {
     return this.getAttribute("is-playing");
   }
-  set isPlaying(value) {}
+  set isPlaying(value) {
+    this.setAttribute("is-playing", value);
+  }
 
   get currentTime() {
     return this.getAttribute("current-time");
   }
-  set currentTime(value) {}
+  set currentTime(value) {
+    this.setAttribute("current-time", value);
+  }
 
   get totalTime() {
     return this.getAttribute("total-time");
   }
-  set totalTime(value) {}
+  set totalTime(value) {
+    this.setAttribute("total-time", value);
+  }
 
   get volume() {
     return this.getAttribute("volume");
   }
-  set volume(value) {}
+  set volume(value) {
+    this.setAttribute("volume", value);
+  }
 
   get isMuted() {
     return this.getAttribute("is-muted");
   }
-  set isMuted(value) {}
+  set isMuted(value) {
+    this.setAttribute("is-muted", value);
+  }
 
   connectedCallback() {
     const labelDropZoneArea: HTMLLabelElement = selectQuery(
@@ -553,17 +561,30 @@ export class AudioPlayer extends HTMLElement {
       this.shadowRoot
     );
 
-    const inputFile: HTMLInputElement = selectQuery(
-      ".index__file-input",
-      this.shadowRoot
-    );
-    log(labelDropZoneArea);
-
     labelDropZoneArea.addEventListener("dragover", this.handleDragOver);
     labelDropZoneArea.addEventListener("dragleave", this.handleDragLeave);
 
     labelDropZoneArea.addEventListener("drop", this.uploadAudioDrop);
+
+    const inputFile: HTMLInputElement = selectQuery(
+      ".index__file-input",
+      this.shadowRoot
+    );
     inputFile.addEventListener("change", this.uploadAudioInput);
+
+    const playPauseAudioButton: HTMLButtonElement = selectQuery(
+      ".index__audio-player--button",
+      this.shadowRoot
+    );
+
+    // playPauseAudioButton.addEventListener("click", )
+
+    const audioSource: HTMLAudioElement = selectQuery("audio", this.shadowRoot);
+    audioSource.addEventListener("timeupdate", (e) => {
+      log("timeupdate!", e);
+      const seconds = Math.trunc(getAudioCurrentTime(audioSource));
+      this.currentTime = seconds.toString();
+    });
   }
 
   disconnectedCallback() {
@@ -571,20 +592,42 @@ export class AudioPlayer extends HTMLElement {
       ".index__file-label",
       this.shadowRoot
     );
-    const inputFile: HTMLInputElement = selectQuery(
-      ".index__file-input",
-      this.shadowRoot
-    );
-    log(labelDropZoneArea);
 
     labelDropZoneArea.removeEventListener("dragover", this.handleDragOver);
     labelDropZoneArea.removeEventListener("dragleave", this.handleDragLeave);
 
     labelDropZoneArea.removeEventListener("drop", this.uploadAudioDrop);
+
+    const inputFile: HTMLInputElement = selectQuery(
+      ".index__file-input",
+      this.shadowRoot
+    );
     inputFile.removeEventListener("change", this.uploadAudioInput);
+
+    const playPauseAudioButton: HTMLButtonElement = selectQuery(
+      ".index__audio-player--button",
+      this.shadowRoot
+    );
+
+    // playPauseAudioButton.removeEventListener("click", )
+
+    const audioSource: HTMLAudioElement = selectQuery("audio", this.shadowRoot);
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    const audioSourceElement: HTMLAudioElement = selectQuery(
+      "audio",
+      this.shadowRoot
+    );
+
+    const webComponent = selectQuery("audio-player");
+
+    const mp3PlayerSection: HTMLElement = selectQuery(
+      ".index__audio-player",
+      this.shadowRoot
+    );
+
+    audioSourceElement.addEventListener("loadeddata", () => {});
     switch (name) {
       case "title": {
         log({ name, oldValue, newValue });
@@ -598,14 +641,69 @@ export class AudioPlayer extends HTMLElement {
         break;
       }
       case "is-playing": {
+        const isPlaying = newValue === "true";
+        if (isPlaying) {
+          playAudio(audioSourceElement);
+        } else {
+          pauseAudio(audioSourceElement);
+        }
         //…
         break;
       }
       case "current-time": {
+        const currentTimeParagraph: HTMLParagraphElement = selectQuery(
+          ".index__audio-player--current-time",
+          mp3PlayerSection
+        );
+        const currentTimeInSeconds: number = Number(newValue);
+        const {
+          seconds,
+          minutes,
+          hours,
+        }: {
+          seconds: string;
+          minutes: string;
+          hours: string;
+        } = formatTimeValues(currentTimeInSeconds);
+
+        const hasHours: boolean = Number(hours) !== 0;
+        if (hasHours) {
+          currentTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
+        } else {
+          currentTimeParagraph.textContent = `${minutes}:${seconds}`;
+        }
+        const spanProgressBar: HTMLSpanElement = selectQuery(
+          ".index__audio-player--current-progress",
+          mp3PlayerSection
+        );
+
+        const totalTimeInSeconds: number = Number(
+          this.getAttribute("total-time")
+        );
+
+        setStyleProperty(
+          "--progress",
+          `${Math.ceil(+this.currentTime / +this.totalTime)}%`,
+          spanProgressBar
+        );
         //…
         break;
       }
       case "total-time": {
+        const totalTimeParagraph: HTMLParagraphElement = selectQuery(
+          ".index__audio-player--total-time",
+          mp3PlayerSection
+        );
+        const totalTimeInSeconds = Number(newValue);
+        const { hours, minutes, seconds } =
+          formatTimeValues(totalTimeInSeconds);
+
+        const hasHours: boolean = Number(hours) !== 0;
+        if (hasHours) {
+          totalTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
+          return;
+        }
+        totalTimeParagraph.textContent = `${minutes}:${seconds}`;
         //…
         break;
       }
@@ -660,20 +758,16 @@ async function showAudioPlayer(componentHost: ShadowRoot, fileUploaded: File) {
     return;
   }
 
-  const audioElement: HTMLAudioElement = await createAudioElement(fileUploaded);
-  // We'll use to retrieve all the other info
-  appendChildToParent(audioElement, audioPlayerElement);
-
-  const audioSourceElement: HTMLAudioElement = selectQuery(
-    "audio",
-    audioPlayerElement
+  const audioBase64String: string = await transformAudioFileToBase64Text(
+    fileUploaded
   );
-
-  log({ audioSourceElement }, audioSourceElement);
+  // We'll use to retrieve all the other info
+  const audioSource: HTMLAudioElement = selectQuery("audio", componentHost);
+  audioSource.src = audioBase64String;
 
   showPlayer();
   //We wait for the audio to load its metadata
-  audioSourceElement.addEventListener("loadedmetadata", setHostAttributes);
+  audioSource.addEventListener("loadedmetadata", setHostAttributes);
 
   function showPlayer() {
     addClass(labelDropZoneArea, "hide");
@@ -683,7 +777,7 @@ async function showAudioPlayer(componentHost: ShadowRoot, fileUploaded: File) {
   function setHostAttributes() {
     const { name }: File = fileUploaded;
 
-    const totalTime = Math.floor(getAudioTotalTime(audioElement));
+    const totalTime = Math.floor(getAudioTotalTime(audioSource));
 
     const attributesArray: { attribute: string; value: any }[] = [
       { attribute: "title", value: name },

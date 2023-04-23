@@ -45,19 +45,19 @@ export function transformAudioFileToBase64Text(
  * @throws {string} - An error message if the transformAudioFileToBase64Text() function throws an error
  *
  */
-export async function createAudioElement(
-  audioFile: File
-): Promise<HTMLAudioElement> {
-  try {
-    // Transform the audio file to a Base64 encoded string
-    const base64AudioString: string = await transformAudioFileToBase64Text(
-      audioFile
-    );
-    // Create a new HTMLAudioElement with the encoded string as its source
-    const audioElement: HTMLAudioElement = new Audio(base64AudioString);
-    return audioElement;
-  } catch (functionError) {
-    // Log any errors to the console
-    error(functionError);
-  }
-}
+// export async function createAudioElement(
+//   audioFile: File
+// ): Promise<HTMLAudioElement> {
+//   try {
+//     // Transform the audio file to a Base64 encoded string
+//     const base64AudioString: string = await transformAudioFileToBase64Text(
+//       audioFile
+//     );
+//     // Create a new HTMLAudioElement with the encoded string as its source
+//     const audioElement: HTMLAudioElement = new Audio(base64AudioString);
+//     return audioElement;
+//   } catch (functionError) {
+//     // Log any errors to the console
+//     error(functionError);
+//   }
+// }
