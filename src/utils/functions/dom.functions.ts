@@ -16,7 +16,6 @@ export function selectQuery(query: string, container?: any): any {
   const isWebComponent: boolean = container?.tagName?.includes("-");
 
   if (isWebComponent) {
-    //@ts-ignore
     return container.shadowRoot.querySelector(query);
   }
 
@@ -38,7 +37,6 @@ export function selectQueryAll(query: string, container?: any): any[] {
   const isWebComponent: boolean = container.tagName.includes("-");
 
   if (isWebComponent) {
-    //@ts-ignore
     return Array.from(container.shadowRoot.querySelectorAll(query));
   }
 
@@ -48,10 +46,10 @@ export function selectQueryAll(query: string, container?: any): any[] {
 /**
  * Function that returns an array containing all child nodes of an HTML element.
  *
- * @param {HTMLElement} elementOfReference The parent HTML element whose children to select.
+ * @param {any} elementOfReference The parent HTML element whose children to select.
  * @returns {Element[]} An array containing all child nodes of the parent element or null if the parent element has no children.
  */
-export function getChildren(elementOfReference: HTMLElement | null): Element[] {
+export function getChildren(elementOfReference: any | null): Element[] {
   if (!elementOfReference) {
     return [];
   }
@@ -61,16 +59,16 @@ export function getChildren(elementOfReference: HTMLElement | null): Element[] {
 /**
  * Returns the closest ancestor element of a given HTML element based on a CSS selector.
  *
- * @param {HTMLElement} elementOfReference - The HTML element of reference.
+ * @param {any} elementOfReference - The HTML element of reference.
  * @param {string} [cssSelector=""] - The CSS selector to use to select the ancestor element. Default is an empty string.
  *
- * @returns {HTMLElement|null} The closest ancestor element that matches the CSS selector, or null if no ancestor element matches the selector.
+ * @returns {any|null} The closest ancestor element that matches the CSS selector, or null if no ancestor element matches the selector.
  */
 
 export function getAncestor(
-  elementOfReference: HTMLElement,
+  elementOfReference: any,
   cssSelector: string = ""
-): HTMLElement | null {
+): any | null {
   return elementOfReference.closest(cssSelector);
 }
 
@@ -90,13 +88,10 @@ export function getComponentHost(elementOfReference: any): any {
 /**
  * Returns the next sibling element of the specified element.
  *
- * @param {HTMLElement} elementOfReference - The reference element whose sibling to return.
- * @returns {HTMLElement | null} The next sibling element, or null if there is none.
+ * @param {any} elementOfReference - The reference element whose sibling to return.
+ * @returns {any | null} The next sibling element, or null if there is none.
  */
-export function getSibling(
-  elementOfReference: HTMLElement
-): HTMLElement | null {
-  //@ts-ignore
+export function getSibling(elementOfReference: any): any | null {
   return elementOfReference.nextElementSibling;
 }
 
@@ -104,11 +99,11 @@ export function getSibling(
  *
  * Returns an array of strings representing the classes of the specified element.
  *
- * @param {HTMLElement} elementOfReference - The element to retrieve class values from.
+ * @param {any} elementOfReference - The element to retrieve class values from.
  *
  * @returns An array of strings representing the classes of the specified element.
  */
-export function getClassListValues(elementOfReference: HTMLElement): string[] {
+export function getClassListValues(elementOfReference: any): string[] {
   return Array.from(elementOfReference.classList);
 }
 
@@ -117,28 +112,42 @@ export function getClassListValues(elementOfReference: HTMLElement): string[] {
  *
  * @param {string} property - The name of the style property to set.
  * @param {any} value - The value to set for the specified style property.
- * @param {HTMLElement} [element=document.body] - The HTML element to set the style property for, ***NOT mandatory***.
+ * @param {any} [element=document.body] - The HTML element to set the style property for, ***NOT mandatory***.
 
 * @returns {void}
  */
 export function setStyleProperty(
   property: string,
   value: any,
-  element: HTMLElement = document.body
+  element: any = document.body
 ): void {
   const stringifiedValue = value.toString();
   return element.style.setProperty(property, stringifiedValue);
 }
 
 /**
- * Adds or modifies an attribute to the given element.
+ * Appends a child element to a parent element
  *
- * @param element The element to add the attribute to.
- * @param property The name of the attribute to add.
- * @param value The value to set the attribute to.
+ * @param {any} childElement - The child element to append to the parent element
+ * @param {any} parentElement - The parent element to which the child element should be appended
+ * @returns {HTMLElement} - The appended child element
+ */
+export function appendChildToParent(
+  childElement: any,
+  parentElement: any
+): HTMLElement {
+  return parentElement.appendChild(childElement);
+}
+
+/**
+ * Adds or modifies an attribute to the given element
+ *
+ * @param element The element to add the attribute to
+ * @param property The name of the attribute to add
+ * @param value The value to set the attribute to
  */
 export function modifyAttribute(
-  element: Element,
+  element: any,
   property: string,
   value: any
 ): void {
@@ -148,12 +157,12 @@ export function modifyAttribute(
 /**
  * Removes an attribute from an element and sets a new attribute in its place.
  *
- * @param {Element} element - The element from which to remove the attribute.
+ * @param {any} element - The element from which to remove the attribute.
  * @param {string} oldAttribute - The name of the attribute to remove.
  * @param {string} newAttribute - The name of the new attribute to set.
  */
 export function replaceAttribute(
-  element: Element,
+  element: any,
   oldAttribute: string,
   newAttribute: string
 ) {

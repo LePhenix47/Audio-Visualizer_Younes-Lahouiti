@@ -1,11 +1,18 @@
+import { getAudioTotalTime } from "../utils/functions/audio.functions";
 import { log } from "../utils/functions/console.functions";
 import {
   addClass,
+  appendChildToParent,
   getComponentHost,
+  modifyAttribute,
   removeClass,
   selectQuery,
   selectQueryAll,
 } from "../utils/functions/dom.functions";
+import {
+  createAudioElement,
+  transformAudioFileToBase64Text,
+} from "../utils/functions/file.functions";
 import { splitString } from "../utils/functions/string.functions";
 
 const audioPlayerTemplateElement = document.createElement("template");
@@ -226,7 +233,9 @@ const audioPlayerTemplateStyle = /*css*/ `
     overflow: hidden;
     padding-bottom: 20px;
     text-overflow: ellipsis;
-    white-space: nowrap
+    white-space: nowrap;
+    text-indent: 0%;
+    transition: text-indent 350ms ease;
 }
 
 .index__audio-player--progress {
@@ -624,19 +633,77 @@ async function checkFileType(fileUploaded: File, typeExpected: string) {
   return fileType === typeExpected;
 }
 
-async function showAudioPlayer(componentHost, fileUploaded) {
+async function showAudioPlayer(componentHost: ShadowRoot, fileUploaded: File) {
   log("test", { componentHost }, { fileUploaded });
-  const labelDropZoneArea = selectQuery(".index__file-label", componentHost);
-  const audioPlayer = selectQuery(".index__audio-player", componentHost);
+  const labelDropZoneArea: HTMLLabelElement = selectQuery(
+    ".index__file-label",
+    componentHost
+  );
+  const audioPlayerElement: HTMLElement = selectQuery(
+    ".index__audio-player",
+    componentHost
+  );
 
-  const isAnAudioFile = await checkFileType(fileUploaded, "audio");
+  const isNotAnAudioFile: boolean = !(await checkFileType(
+    fileUploaded,
+    "audio"
+  ));
 
-  if (isAnAudioFile) {
-    log("showing");
-    log(labelDropZoneArea, audioPlayer);
-    addClass(labelDropZoneArea, "hide");
-    removeClass(audioPlayer, "hide");
-  } else {
+  function showError() {
+    log("Not an audio file, showing error message");
     removeClass(labelDropZoneArea, "active");
+    labelDropZoneArea.innerText = "File uploaded is not an audio";
+  }
+
+  if (isNotAnAudioFile) {
+    showError();
+    return;
+  }
+
+  const audioElement: HTMLAudioElement = await createAudioElement(fileUploaded);
+  // We'll use to retrieve all the other info
+  appendChildToParent(audioElement, audioPlayerElement);
+
+  const audioSourceElement: HTMLAudioElement = selectQuery(
+    "audio",
+    audioPlayerElement
+  );
+
+  log({ audioSourceElement }, audioSourceElement);
+
+  showPlayer();
+  //We wait for the audio to load its metadata
+  audioSourceElement.addEventListener("loadedmetadata", setHostAttributes);
+
+  function showPlayer() {
+    addClass(labelDropZoneArea, "hide");
+    removeClass(audioPlayerElement, "hide");
+  }
+
+  function setHostAttributes() {
+    const { name }: File = fileUploaded;
+
+    const totalTime = Math.floor(getAudioTotalTime(audioElement));
+
+    const attributesArray: { attribute: string; value: any }[] = [
+      { attribute: "title", value: name },
+      { attribute: "is-playing", value: false },
+      { attribute: "current-time", value: 0 },
+      { attribute: "total-time", value: totalTime },
+      { attribute: "volume", value: 50 },
+      { attribute: "is-muted", value: false },
+    ];
+
+    for (const attributeKeyPairValues of attributesArray) {
+      const {
+        attribute,
+        value,
+      }: {
+        attribute: string;
+        value: any;
+      } = attributeKeyPairValues;
+
+      modifyAttribute(componentHost, attribute, value);
+    }
   }
 }

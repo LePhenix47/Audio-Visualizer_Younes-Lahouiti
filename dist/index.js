@@ -4,6 +4,63 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
 (() => {
 
+;// CONCATENATED MODULE: ./src/utils/functions/audio.functions.ts
+/**
+ * Plays the audio element
+ * @param {HTMLAudioElement} audio - The HTML audio element to be played
+ */
+function playAudio(audio) {
+    audio.play();
+}
+/**
+ * Pauses the audio element
+ * @param {HTMLAudioElement} audio - The HTML audio element to be paused
+ */
+function pauseAudio(audio) {
+    audio.pause();
+}
+/**
+ * Sets the volume of an audio element
+ * @param {HTMLAudioElement} audio - The audio element to set the volume for
+ * @param {number} volume - The volume level to set (between 0 and 1)
+ */
+function setAudioVolume(audio, volume) {
+    audio.volume = volume;
+}
+/**
+ * Sets to a specific timestamp in an audio element
+ * @param {HTMLAudioElement} audio - The audio element to seek
+ * @param {number} time - The time to seek to (in seconds)
+ */
+function setTimestampAudio(audio, time) {
+    audio.currentTime = time;
+}
+/**
+ * Returns the current time (in seconds) of an audio element
+ * @param {HTMLAudioElement} audio - The audio element to get the current time from
+ * @returns {number} The current time of the audio element (in seconds)
+ */
+function getAudioCurrentTime(audio) {
+    return audio.currentTime;
+}
+/**
+ * Gets the duration of an audio file in seconds
+ *
+ * @param {HTMLAudioElement} audio - The audio element to get the duration from
+ * @returns {number} The duration of the audio file in seconds (returns 0 if it's not available)
+ */
+function getAudioTotalTime(audio) {
+    return isNaN(audio.duration) ? 0 : audio.duration;
+}
+/**
+ * Checks if an audio element has ended
+ * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
+ * @returns Boolean value telling whether or not the audio has ended
+ */
+function checkIfAudioEnded(audio) {
+    return audio.ended;
+}
+
 ;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
 /**
  * The console methods are exported as separate methods through destructuring
@@ -28,7 +85,6 @@ function selectQuery(query, container) {
      */
     const isWebComponent = (_a = container === null || container === void 0 ? void 0 : container.tagName) === null || _a === void 0 ? void 0 : _a.includes("-");
     if (isWebComponent) {
-        //@ts-ignore
         return container.shadowRoot.querySelector(query);
     }
     return container.querySelector(query);
@@ -46,7 +102,6 @@ function selectQueryAll(query, container) {
     }
     const isWebComponent = container.tagName.includes("-");
     if (isWebComponent) {
-        //@ts-ignore
         return Array.from(container.shadowRoot.querySelectorAll(query));
     }
     return Array.from(container.querySelectorAll(query));
@@ -54,7 +109,7 @@ function selectQueryAll(query, container) {
 /**
  * Function that returns an array containing all child nodes of an HTML element.
  *
- * @param {HTMLElement} elementOfReference The parent HTML element whose children to select.
+ * @param {any} elementOfReference The parent HTML element whose children to select.
  * @returns {Element[]} An array containing all child nodes of the parent element or null if the parent element has no children.
  */
 function getChildren(elementOfReference) {
@@ -66,10 +121,10 @@ function getChildren(elementOfReference) {
 /**
  * Returns the closest ancestor element of a given HTML element based on a CSS selector.
  *
- * @param {HTMLElement} elementOfReference - The HTML element of reference.
+ * @param {any} elementOfReference - The HTML element of reference.
  * @param {string} [cssSelector=""] - The CSS selector to use to select the ancestor element. Default is an empty string.
  *
- * @returns {HTMLElement|null} The closest ancestor element that matches the CSS selector, or null if no ancestor element matches the selector.
+ * @returns {any|null} The closest ancestor element that matches the CSS selector, or null if no ancestor element matches the selector.
  */
 function getAncestor(elementOfReference, cssSelector = "") {
     return elementOfReference.closest(cssSelector);
@@ -88,18 +143,17 @@ function getComponentHost(elementOfReference) {
 /**
  * Returns the next sibling element of the specified element.
  *
- * @param {HTMLElement} elementOfReference - The reference element whose sibling to return.
- * @returns {HTMLElement | null} The next sibling element, or null if there is none.
+ * @param {any} elementOfReference - The reference element whose sibling to return.
+ * @returns {any | null} The next sibling element, or null if there is none.
  */
 function getSibling(elementOfReference) {
-    //@ts-ignore
     return elementOfReference.nextElementSibling;
 }
 /**
  *
  * Returns an array of strings representing the classes of the specified element.
  *
- * @param {HTMLElement} elementOfReference - The element to retrieve class values from.
+ * @param {any} elementOfReference - The element to retrieve class values from.
  *
  * @returns An array of strings representing the classes of the specified element.
  */
@@ -111,7 +165,7 @@ function getClassListValues(elementOfReference) {
  *
  * @param {string} property - The name of the style property to set.
  * @param {any} value - The value to set for the specified style property.
- * @param {HTMLElement} [element=document.body] - The HTML element to set the style property for, ***NOT mandatory***.
+ * @param {any} [element=document.body] - The HTML element to set the style property for, ***NOT mandatory***.
 
 * @returns {void}
  */
@@ -120,11 +174,21 @@ function setStyleProperty(property, value, element = document.body) {
     return element.style.setProperty(property, stringifiedValue);
 }
 /**
- * Adds or modifies an attribute to the given element.
+ * Appends a child element to a parent element
  *
- * @param element The element to add the attribute to.
- * @param property The name of the attribute to add.
- * @param value The value to set the attribute to.
+ * @param {any} childElement - The child element to append to the parent element
+ * @param {any} parentElement - The parent element to which the child element should be appended
+ * @returns {HTMLElement} - The appended child element
+ */
+function appendChildToParent(childElement, parentElement) {
+    return parentElement.appendChild(childElement);
+}
+/**
+ * Adds or modifies an attribute to the given element
+ *
+ * @param element The element to add the attribute to
+ * @param property The name of the attribute to add
+ * @param value The value to set the attribute to
  */
 function modifyAttribute(element, property, value) {
     element.setAttribute(property, value.toString());
@@ -132,7 +196,7 @@ function modifyAttribute(element, property, value) {
 /**
  * Removes an attribute from an element and sets a new attribute in its place.
  *
- * @param {Element} element - The element from which to remove the attribute.
+ * @param {any} element - The element from which to remove the attribute.
  * @param {string} oldAttribute - The name of the attribute to remove.
  * @param {string} newAttribute - The name of the new attribute to set.
  */
@@ -183,6 +247,70 @@ function removeClass(element, className) {
  */
 function replaceClass(element, oldClassName, newClassName) {
     element.classList.replace(oldClassName, newClassName);
+}
+
+;// CONCATENATED MODULE: ./src/utils/functions/file.functions.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+/**
+ * Transforms an audio file into a base64-encoded string
+ *
+ * @param {File} audioFile - The audio file to be transformed
+ * @returns {Promise<string>} - A promise that resolves with the base64-encoded string of the audio file
+ *
+ * @throws {string} - An error message if the base64 string is not found or if reading the audio file fails
+ */
+function transformAudioFileToBase64Text(audioFile) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(audioFile);
+        // When the audio file is loaded, extract the base64 string and resolve the promise with it
+        reader.addEventListener("load", (e) => {
+            const base64MediaString = reader.result;
+            const isNotString = typeof base64MediaString !== "string";
+            if (isNotString) {
+                reject("Error: Base64 string not found.");
+                return;
+            }
+            resolve(base64MediaString);
+        });
+        // If there's an error while reading the audio file, reject the promise with an error message
+        reader.addEventListener("error", () => {
+            reject("Error: Failed to read audio file.");
+        });
+    });
+}
+/**
+ * Creates an audio element from an uploaded audio file
+ *
+ * @param {File} audioFile - The audio file to be transformed
+ * @returns {Promise<HTMLAudioElement>} - A promise that resolves with the created HTMLAudioElement
+ *
+ * @throws {string} - An error message if the transformAudioFileToBase64Text() function throws an error
+ *
+ */
+function createAudioElement(audioFile) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // Transform the audio file to a Base64 encoded string
+            const base64AudioString = yield transformAudioFileToBase64Text(audioFile);
+            // Create a new HTMLAudioElement with the encoded string as its source
+            const audioElement = new Audio(base64AudioString);
+            return audioElement;
+        }
+        catch (functionError) {
+            // Log any errors to the console
+            error(functionError);
+        }
+    });
 }
 
 ;// CONCATENATED MODULE: ./src/utils/functions/string.functions.ts
@@ -364,7 +492,7 @@ function toPercent(number) {
 }
 
 ;// CONCATENATED MODULE: ./src/components/audio-player.component.ts
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var audio_player_component_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -373,6 +501,8 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
+
 
 
 
@@ -591,7 +721,9 @@ const audioPlayerTemplateStyle = /*css*/ `
     overflow: hidden;
     padding-bottom: 20px;
     text-overflow: ellipsis;
-    white-space: nowrap
+    white-space: nowrap;
+    text-indent: 0%;
+    transition: text-indent 350ms ease;
 }
 
 .index__audio-player--progress {
@@ -819,7 +951,7 @@ class AudioPlayer extends HTMLElement {
      * @returns {any} - Returns nothing.
      */
     uploadAudioDrop(event) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return audio_player_component_awaiter(this, void 0, void 0, function* () {
             console_functions_log(event);
             event.preventDefault();
             const fileUploaded = event.dataTransfer.files[0];
@@ -833,7 +965,7 @@ class AudioPlayer extends HTMLElement {
         });
     }
     uploadAudioInput(event) {
-        return __awaiter(this, void 0, void 0, function* () {
+        return audio_player_component_awaiter(this, void 0, void 0, function* () {
             //@ts-ignore
             console_functions_log(event.currentTarget.files);
             //@ts-ignore
@@ -935,26 +1067,54 @@ class AudioPlayer extends HTMLElement {
 }
 customElements.define("audio-player", AudioPlayer);
 function checkFileType(fileUploaded, typeExpected) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return audio_player_component_awaiter(this, void 0, void 0, function* () {
         const { lastModified, name, type, size } = fileUploaded;
         const fileType = splitString(type, "/")[0];
         return fileType === typeExpected;
     });
 }
 function showAudioPlayer(componentHost, fileUploaded) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return audio_player_component_awaiter(this, void 0, void 0, function* () {
         console_functions_log("test", { componentHost }, { fileUploaded });
         const labelDropZoneArea = selectQuery(".index__file-label", componentHost);
-        const audioPlayer = selectQuery(".index__audio-player", componentHost);
-        const isAnAudioFile = yield checkFileType(fileUploaded, "audio");
-        if (isAnAudioFile) {
-            console_functions_log("showing");
-            console_functions_log(labelDropZoneArea, audioPlayer);
-            addClass(labelDropZoneArea, "hide");
-            removeClass(audioPlayer, "hide");
-        }
-        else {
+        const audioPlayerElement = selectQuery(".index__audio-player", componentHost);
+        const isNotAnAudioFile = !(yield checkFileType(fileUploaded, "audio"));
+        function showError() {
+            console_functions_log("Not an audio file, showing error message");
             removeClass(labelDropZoneArea, "active");
+            labelDropZoneArea.innerText = "File uploaded is not an audio";
+        }
+        if (isNotAnAudioFile) {
+            showError();
+            return;
+        }
+        const audioElement = yield createAudioElement(fileUploaded);
+        // We'll use to retrieve all the other info
+        appendChildToParent(audioElement, audioPlayerElement);
+        const audioSourceElement = selectQuery("audio", audioPlayerElement);
+        console_functions_log({ audioSourceElement }, audioSourceElement);
+        showPlayer();
+        //We wait for the audio to load its metadata
+        audioSourceElement.addEventListener("loadedmetadata", setHostAttributes);
+        function showPlayer() {
+            addClass(labelDropZoneArea, "hide");
+            removeClass(audioPlayerElement, "hide");
+        }
+        function setHostAttributes() {
+            const { name } = fileUploaded;
+            const totalTime = Math.floor(getAudioTotalTime(audioElement));
+            const attributesArray = [
+                { attribute: "title", value: name },
+                { attribute: "is-playing", value: false },
+                { attribute: "current-time", value: 0 },
+                { attribute: "total-time", value: totalTime },
+                { attribute: "volume", value: 50 },
+                { attribute: "is-muted", value: false },
+            ];
+            for (const attributeKeyPairValues of attributesArray) {
+                const { attribute, value, } = attributeKeyPairValues;
+                modifyAttribute(componentHost, attribute, value);
+            }
         }
     });
 }
