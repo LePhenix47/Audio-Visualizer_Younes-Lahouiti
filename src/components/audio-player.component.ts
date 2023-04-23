@@ -393,7 +393,7 @@ const audioPlayerTemplateHTMLContent = /*html */ `
         </label>
         <input type="file" id="audio-file" class="index__input index__file-input hide" accept="audio/*" />
 
-        <section class="index__audio-player">
+        <section class="index__audio-player hide">
             <canvas class="index__canvas index__canvas--round"></canvas>
             <audio preload="auto" src=""></audio> 
             <h2 class="index__audio-player--name">Music title</h2>
@@ -504,6 +504,8 @@ export class AudioPlayer extends HTMLElement {
     //@ts-ignore
     const button: HTMLButtonElement = event.currentTarget;
 
+    const shadowRoot: ShadowRoot = getComponentHost(button);
+
     const playSVG: SVGElement = selectQuery(
       ".index__audio-player--play-icon",
       button
@@ -530,6 +532,36 @@ export class AudioPlayer extends HTMLElement {
       needToPause,
       needToRestartAndPause,
     });
+
+    function showOnlyPlayIcon() {
+      modifyAttribute(shadowRoot, "is-playing", false);
+      addClass(pauseSVG, "hide");
+      addClass(restartSVG, "hide");
+      removeClass(playSVG, "hide");
+    }
+
+    function showOnlyPauseIcon() {
+      modifyAttribute(shadowRoot, "is-playing", true);
+      addClass(playSVG, "hide");
+      addClass(restartSVG, "hide");
+      removeClass(pauseSVG, "hide");
+    }
+
+    function showOnlyRestartIcon() {
+      modifyAttribute(shadowRoot, "is-playing", false);
+      addClass(playSVG, "hide");
+      addClass(pauseSVG, "hide");
+      removeClass(restartSVG, "hide");
+    }
+    if (needToPlay) {
+      showOnlyPauseIcon();
+    } else if (needToPause) {
+      showOnlyPlayIcon();
+    } else if (needToRestartAndPause) {
+      showOnlyRestartIcon();
+    } else {
+      throw "Unknown error: No boolean check passed";
+    }
   }
 
   setVolume(value: number) {
@@ -549,46 +581,49 @@ export class AudioPlayer extends HTMLElement {
       "is-muted",
     ];
   }
-
+  /**
+   *
+   * Setters and getters
+   * */
   get title() {
     return this.getAttribute("title");
   }
-  set title(value) {
+  set title(value: string) {
     this.setAttribute("title", value);
   }
 
   get isPlaying() {
     return this.getAttribute("is-playing");
   }
-  set isPlaying(value) {
+  set isPlaying(value: string) {
     this.setAttribute("is-playing", value);
   }
 
   get currentTime() {
     return this.getAttribute("current-time");
   }
-  set currentTime(value) {
+  set currentTime(value: string) {
     this.setAttribute("current-time", value);
   }
 
   get totalTime() {
     return this.getAttribute("total-time");
   }
-  set totalTime(value) {
+  set totalTime(value: string) {
     this.setAttribute("total-time", value);
   }
 
   get volume() {
     return this.getAttribute("volume");
   }
-  set volume(value) {
+  set volume(value: string) {
     this.setAttribute("volume", value);
   }
 
   get isMuted() {
     return this.getAttribute("is-muted");
   }
-  set isMuted(value) {
+  set isMuted(value: string) {
     this.setAttribute("is-muted", value);
   }
 
@@ -683,6 +718,7 @@ export class AudioPlayer extends HTMLElement {
         break;
       }
       case "is-playing": {
+        log("Play-pause button clicked!");
         const isPlaying: boolean = newValue === "true";
         if (isPlaying) {
           playAudio(audioSourceElement);
