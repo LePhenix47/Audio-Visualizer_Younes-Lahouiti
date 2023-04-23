@@ -102,13 +102,6 @@ export function formatTimeValues(seconds: number): {
         ? unformattedMinutes.toString()
         : `0${unformattedMinutes}`;
   }
-
-  log({
-    hours: formattedHours,
-    minutes: formattedMinutes,
-    seconds: formattedSeconds,
-  });
-
   // Return the formatted time object
   return {
     hours: formattedHours,

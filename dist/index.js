@@ -4,14 +4,7 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
 (() => {
 
-;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
-/**
- * The console methods are exported as separate methods through destructuring
- */
-const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
-
 ;// CONCATENATED MODULE: ./src/utils/functions/audio.functions.ts
-
 /**
  * Plays the audio element
  * @param {HTMLAudioElement} audio - The HTML audio element to be played
@@ -97,11 +90,6 @@ function formatTimeValues(seconds) {
                 ? unformattedMinutes.toString()
                 : `0${unformattedMinutes}`;
     }
-    console_functions_log({
-        hours: formattedHours,
-        minutes: formattedMinutes,
-        seconds: formattedSeconds,
-    });
     // Return the formatted time object
     return {
         hours: formattedHours,
@@ -109,6 +97,12 @@ function formatTimeValues(seconds) {
         seconds: formattedSeconds,
     };
 }
+
+;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
+/**
+ * The console methods are exported as separate methods through destructuring
+ */
+const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
 
 ;// CONCATENATED MODULE: ./src/utils/functions/dom.functions.ts
 /**
@@ -919,7 +913,7 @@ const audioPlayerTemplateHTMLContent = /*html */ `
         </label>
         <input type="file" id="audio-file" class="index__input index__file-input hide" accept="audio/*" />
 
-        <section class="index__audio-player hide">
+        <section class="index__audio-player">
             <canvas class="index__canvas index__canvas--round"></canvas>
             <audio preload="auto" src=""></audio> 
             <h2 class="index__audio-player--name">Music title</h2>
@@ -935,26 +929,26 @@ const audioPlayerTemplateHTMLContent = /*html */ `
             <div class="index__audio-player--controls">
                 <div class="index__audio-player--buttons">
                     <button class="index__audio-player--button">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="" fill="currentColor" viewBox="0 0 384 512" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="index__audio-player--play-icon" fill="currentColor" viewBox="0 0 384 512" height="16" width="16">
                             <path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/>
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="hide" fill="currentColor" viewBox="0 0 320 512" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="index__audio-player--pause-icon hide" fill="currentColor" viewBox="0 0 320 512" height="16" width="16">
                             <path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/>
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="hide" fill="currentColor" viewBox="0 0 512 512" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="index__audio-player--restart-icon hide" fill="currentColor" viewBox="0 0 512 512" height="16" width="16">
                             <path d="M125.7 160H176c17.7 0 32 14.3 32 32s-14.3 32-32 32H48c-17.7 0-32-14.3-32-32V64c0-17.7 14.3-32 32-32s32 14.3 32 32v51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"/>
                     </svg>
                     </button>
                 </div>
                 <div class="index__audio-player--volume">
                     <button class="index__audio-player--mute" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="hide" fill="currentColor" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="index__audio-player--mutd-volume-icon hide" fill="currentColor" height="16" width="16">
                             <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/>
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="hide" fill="currentColor" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="index__audio-player--low-volume-icon hide" fill="currentColor" height="16" width="16">
                             <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM412.6 181.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5z"/>
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="" fill="currentColor" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="index__audio-player--high-volume-icon" fill="currentColor" height="16" width="16">
                             <path d="M533.6 32.5C598.5 85.3 640 165.8 640 256s-41.5 170.8-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"/>
                         </svg>
                     </button>
@@ -1014,6 +1008,26 @@ class AudioPlayer extends HTMLElement {
             showAudioPlayer(componentHost, fileUploaded);
         });
     }
+    playPause(event) {
+        console_functions_log("Click!");
+        //@ts-ignore
+        const button = event.currentTarget;
+        const playSVG = selectQuery(".index__audio-player--play-icon", button);
+        const pauseSVG = selectQuery(".index__audio-player--pause-icon", button);
+        const restartSVG = selectQuery(".index__audio-player--restart-icon", button);
+        const shownSvg = selectQuery("svg:not(.hide)", button);
+        const needToPlay = shownSvg === playSVG;
+        const needToPause = shownSvg === pauseSVG;
+        const needToRestartAndPause = shownSvg === restartSVG;
+        console_functions_log({
+            needToPlay,
+            needToPause,
+            needToRestartAndPause,
+        });
+    }
+    setVolume(value) {
+        this.volume = value.toString();
+    }
     /**
      *Static method used to store the array of all the custom attributes of the component
      */
@@ -1071,13 +1085,21 @@ class AudioPlayer extends HTMLElement {
         labelDropZoneArea.addEventListener("drop", this.uploadAudioDrop);
         const inputFile = selectQuery(".index__file-input", this.shadowRoot);
         inputFile.addEventListener("change", this.uploadAudioInput);
+        /**
+         * Need to remove the event listeners on the disconnectedCallback()
+         */
         const playPauseAudioButton = selectQuery(".index__audio-player--button", this.shadowRoot);
-        // playPauseAudioButton.addEventListener("click", )
+        playPauseAudioButton.addEventListener("click", this.playPause);
         const audioSource = selectQuery("audio", this.shadowRoot);
         audioSource.addEventListener("timeupdate", (e) => {
-            console_functions_log("timeupdate!", e);
             const seconds = Math.trunc(getAudioCurrentTime(audioSource));
             this.currentTime = seconds.toString();
+        });
+        const sliderInput = selectQuery(".index__audio-player--slider", this.shadowRoot);
+        sliderInput.addEventListener("input", (e) => {
+            //@ts-ignore
+            const valueOfInput = e.target.value;
+            this.setVolume(valueOfInput);
         });
     }
     disconnectedCallback() {
@@ -1087,75 +1109,82 @@ class AudioPlayer extends HTMLElement {
         labelDropZoneArea.removeEventListener("drop", this.uploadAudioDrop);
         const inputFile = selectQuery(".index__file-input", this.shadowRoot);
         inputFile.removeEventListener("change", this.uploadAudioInput);
-        const playPauseAudioButton = selectQuery(".index__audio-player--button", this.shadowRoot);
-        // playPauseAudioButton.removeEventListener("click", )
-        const audioSource = selectQuery("audio", this.shadowRoot);
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        const audioSourceElement = selectQuery("audio", this.shadowRoot);
-        const webComponent = selectQuery("audio-player");
-        const mp3PlayerSection = selectQuery(".index__audio-player", this.shadowRoot);
-        audioSourceElement.addEventListener("loadeddata", () => { });
-        switch (name) {
-            case "title": {
-                console_functions_log({ name, oldValue, newValue });
-                const titleOfPlayer = selectQuery(".index__audio-player--name", this.shadowRoot);
-                titleOfPlayer.textContent = newValue;
-                //…
-                break;
-            }
-            case "is-playing": {
-                const isPlaying = newValue === "true";
-                if (isPlaying) {
-                    playAudio(audioSourceElement);
+        return __awaiter(this, void 0, void 0, function* () {
+            const audioSourceElement = selectQuery("audio", this.shadowRoot);
+            const mp3PlayerSection = selectQuery(".index__audio-player", this.shadowRoot);
+            audioSourceElement.addEventListener("loadeddata", () => { });
+            switch (name) {
+                case "title": {
+                    console_functions_log({ name, oldValue, newValue });
+                    const titleOfPlayer = selectQuery(".index__audio-player--name", this.shadowRoot);
+                    titleOfPlayer.textContent = newValue;
+                    //…
+                    break;
                 }
-                else {
-                    pauseAudio(audioSourceElement);
+                case "is-playing": {
+                    const isPlaying = newValue === "true";
+                    if (isPlaying) {
+                        playAudio(audioSourceElement);
+                    }
+                    else {
+                        pauseAudio(audioSourceElement);
+                    }
+                    //…
+                    break;
                 }
-                //…
-                break;
-            }
-            case "current-time": {
-                const currentTimeParagraph = selectQuery(".index__audio-player--current-time", mp3PlayerSection);
-                const currentTimeInSeconds = Number(newValue);
-                const { seconds, minutes, hours, } = formatTimeValues(currentTimeInSeconds);
-                const hasHours = Number(hours) !== 0;
-                if (hasHours) {
-                    currentTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
+                case "current-time": {
+                    const currentTimeParagraph = selectQuery(".index__audio-player--current-time", mp3PlayerSection);
+                    const currentTimeInSeconds = Number(newValue);
+                    const { seconds, minutes, hours, } = formatTimeValues(currentTimeInSeconds);
+                    const hasHours = Number(hours) !== 0;
+                    if (hasHours) {
+                        currentTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
+                    }
+                    else {
+                        currentTimeParagraph.textContent = `${minutes}:${seconds}`;
+                    }
+                    const spanProgressBar = selectQuery(".index__audio-player--current-progress", mp3PlayerSection);
+                    const totalTimeInSeconds = Number(this.totalTime);
+                    let currentTime = Number(this.currentTime);
+                    let progressPercentage = Math.ceil((currentTime / totalTimeInSeconds) * 100);
+                    setStyleProperty("--progress", `${progressPercentage}%`, spanProgressBar);
+                    //…
+                    break;
                 }
-                else {
-                    currentTimeParagraph.textContent = `${minutes}:${seconds}`;
+                case "total-time": {
+                    const totalTimeParagraph = selectQuery(".index__audio-player--total-time", mp3PlayerSection);
+                    const totalTimeInSeconds = Number(newValue);
+                    const { hours, minutes, seconds } = formatTimeValues(totalTimeInSeconds);
+                    const hasHours = Number(hours) !== 0;
+                    if (hasHours) {
+                        totalTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
+                        return;
+                    }
+                    totalTimeParagraph.textContent = `${minutes}:${seconds}`;
+                    //…
+                    break;
                 }
-                const spanProgressBar = selectQuery(".index__audio-player--current-progress", mp3PlayerSection);
-                const totalTimeInSeconds = Number(this.getAttribute("total-time"));
-                setStyleProperty("--progress", `${Math.ceil(+this.currentTime / +this.totalTime)}%`, spanProgressBar);
-                //…
-                break;
-            }
-            case "total-time": {
-                const totalTimeParagraph = selectQuery(".index__audio-player--total-time", mp3PlayerSection);
-                const totalTimeInSeconds = Number(newValue);
-                const { hours, minutes, seconds } = formatTimeValues(totalTimeInSeconds);
-                const hasHours = Number(hours) !== 0;
-                if (hasHours) {
-                    totalTimeParagraph.textContent = `${hours}:${minutes}:${seconds}`;
-                    return;
+                case "volume": {
+                    const fractionedValue = Number(newValue) / 100;
+                    setAudioVolume(audioSourceElement, fractionedValue);
+                    //…
+                    break;
                 }
-                totalTimeParagraph.textContent = `${minutes}:${seconds}`;
-                //…
-                break;
+                case "is-muted": {
+                    const isMuted = newValue === "true";
+                    if (isMuted) {
+                        this.volume = "0";
+                        return;
+                    }
+                    //…
+                    break;
+                }
+                default:
+                    break;
             }
-            case "volume": {
-                //…
-                break;
-            }
-            case "is-muted": {
-                //…
-                break;
-            }
-            default:
-                break;
-        }
+        });
     }
 }
 customElements.define("audio-player", AudioPlayer);
