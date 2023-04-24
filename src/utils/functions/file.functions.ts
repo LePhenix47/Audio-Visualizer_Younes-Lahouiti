@@ -14,6 +14,7 @@ export function transformAudioFileToBase64Text(
   return new Promise((resolve, reject) => {
     const reader: FileReader = new FileReader();
 
+    //Allows the conversion of binary data, in this case audio files, into a text format
     reader.readAsDataURL(audioFile);
 
     // When the audio file is loaded, extract the base64 string and resolve the promise with it

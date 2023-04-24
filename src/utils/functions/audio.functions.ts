@@ -1,4 +1,5 @@
 import { log } from "./console.functions";
+import { isInRangePowerOfTwo } from "./number.function";
 
 /**
  * Plays the audio element
@@ -117,4 +118,47 @@ export function formatTimeValues(seconds: number): {
     minutes: formattedMinutes,
     seconds: formattedSeconds,
   };
+}
+
+/**
+ * Creates an AudioContext and an AnalyserNode to analyze the frequency data of an HTMLAudioElement
+ *
+ * @param {HTMLAudioElement} audioElement - The HTMLAudioElement to be analyzed
+ * @param {number} amountOfAudioSamples - The number of audio samples to be analyzed between 16 and 32_768
+ *
+ * @returns {Uint8Array} - An unsigned 8-bit integer array with the frequency data of the audio
+ */
+export function createAudioAnalyzer(
+  audioElement: HTMLAudioElement,
+  amountOfAudioSamples: number
+): Uint8Array {
+  // Create the AudioContext
+  const audioContext: AudioContext = new AudioContext();
+
+  // Create an audio node from the <audio> element
+  const audioNodeSource: MediaElementAudioSourceNode =
+    audioContext.createMediaElementSource(audioElement);
+
+  // Create the analyzer, connect it to the audio node source and connect the analyzer to the audio context destination
+  const analyzer: AnalyserNode = audioContext.createAnalyser();
+  audioNodeSource.connect(analyzer);
+  analyzer.connect(audioContext.destination);
+
+  // Set the number of audio sample frequencies with the FFT (Fast Fourier Transform) method
+  //Btw here's an amazing explanation explaining what the FFT is useful for: https://www.youtube.com/watch?v=nmgFG7PUHfo
+  const amountIsOutOfRange: boolean = !isInRangePowerOfTwo(
+    amountOfAudioSamples,
+    4,
+    15
+  );
+  if (amountIsOutOfRange) {
+    analyzer.fftSize = 64;
+    throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";
+  }
+  analyzer.fftSize = amountOfAudioSamples;
+
+  // Create an unsigned 8-bit integer array with the frequency data from the analyzer
+  const bufferLength: number = analyzer.frequencyBinCount;
+  const frequencyDataArray: Uint8Array = new Uint8Array(bufferLength);
+  return frequencyDataArray;
 }

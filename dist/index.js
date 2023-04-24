@@ -5,6 +5,7 @@ var __webpack_exports__ = {};
 (() => {
 
 ;// CONCATENATED MODULE: ./src/utils/functions/audio.functions.ts
+
 /**
  * Plays the audio element
  * @param {HTMLAudioElement} audio - The HTML audio element to be played
@@ -104,6 +105,36 @@ function formatTimeValues(seconds) {
         minutes: formattedMinutes,
         seconds: formattedSeconds,
     };
+}
+/**
+ * Creates an AudioContext and an AnalyserNode to analyze the frequency data of an HTMLAudioElement
+ *
+ * @param {HTMLAudioElement} audioElement - The HTMLAudioElement to be analyzed
+ * @param {number} amountOfAudioSamples - The number of audio samples to be analyzed between 16 and 32_768
+ *
+ * @returns {Uint8Array} - An unsigned 8-bit integer array with the frequency data of the audio
+ */
+function createAudioAnalyzer(audioElement, amountOfAudioSamples) {
+    // Create the AudioContext
+    const audioContext = new AudioContext();
+    // Create an audio node from the <audio> element
+    const audioNodeSource = audioContext.createMediaElementSource(audioElement);
+    // Create the analyzer, connect it to the audio node source and connect the analyzer to the audio context destination
+    const analyzer = audioContext.createAnalyser();
+    audioNodeSource.connect(analyzer);
+    analyzer.connect(audioContext.destination);
+    // Set the number of audio sample frequencies with the FFT (Fast Fourier Transform) method
+    //Btw here's an amazing explanation explaining what the FFT is useful for: https://www.youtube.com/watch?v=nmgFG7PUHfo
+    const amountIsOutOfRange = !isInRangePowerOfTwo(amountOfAudioSamples, 4, 15);
+    if (amountIsOutOfRange) {
+        analyzer.fftSize = 64;
+        throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";
+    }
+    analyzer.fftSize = amountOfAudioSamples;
+    // Create an unsigned 8-bit integer array with the frequency data from the analyzer
+    const bufferLength = analyzer.frequencyBinCount;
+    const frequencyDataArray = new Uint8Array(bufferLength);
+    return frequencyDataArray;
 }
 
 ;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
@@ -325,6 +356,7 @@ function replaceClass(element, oldClassName, newClassName) {
 function transformAudioFileToBase64Text(audioFile) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
+        //Allows the conversion of binary data, in this case audio files, into a text format
         reader.readAsDataURL(audioFile);
         // When the audio file is loaded, extract the base64 string and resolve the promise with it
         reader.addEventListener("load", (e) => {
