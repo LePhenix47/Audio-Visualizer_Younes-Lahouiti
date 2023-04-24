@@ -1,5 +1,5 @@
 /**
- * Checks if a given number is a power of two and falls within a specified range.
+ * Checks if a given number is a power of two and falls within a specified power of 2 range
  *
  * @param {number} number - The number to check.
  * @param {number} minExponent - The minimum exponent of the power of two.
