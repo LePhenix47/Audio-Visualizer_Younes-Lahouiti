@@ -987,11 +987,19 @@ audioPlayerTemplateElement.innerHTML = /* html */ `
  * @extends {HTMLElement}
  */
 class AudioPlayer extends HTMLElement {
+    /**
+     * Creates an instance of AudioPlayer.
+     * Attaches a shadow root to the custom element, clones and appends the content of the audio-player-template element.
+     * @constructor
+     * @extends {HTMLElement}
+     */
     constructor() {
+        //We inherit the methods of HTMLElement
         super();
+        // Attaches a shadow root to the custom element
         const shadowRoot = this.attachShadow({ mode: "open" });
+        // Clones and appends the content of the audio-player-template element
         const clonedTemplate = audioPlayerTemplateElement.content.cloneNode(true);
-        //We add it as a child of our web component
         shadowRoot.appendChild(clonedTemplate);
     }
     /**
@@ -1190,10 +1198,10 @@ class AudioPlayer extends HTMLElement {
      *
      * @param {InputEvent} event - The input event.
      */
-    setVolume(e) {
+    setVolume(event) {
         // @ts-ignore
-        const valueOfInput = Number(e.target.value);
-        const shadowRoot = getComponentHost(e.currentTarget);
+        const valueOfInput = Number(event.target.value);
+        const shadowRoot = getComponentHost(event.currentTarget);
         const hasHighVolume = valueOfInput >= 50;
         const hasLowVolume = valueOfInput < 50 && valueOfInput !== 0;
         const hasNoVolume = valueOfInput === 0;
@@ -1256,6 +1264,8 @@ class AudioPlayer extends HTMLElement {
     //Web component methods
     /**
      * Invoked each time the custom element is appended into a document-connected element.
+     *
+     * @return {void} Nothing
      */
     connectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
@@ -1284,6 +1294,8 @@ class AudioPlayer extends HTMLElement {
     }
     /**
      * Invoked each time the custom element is disconnected from the document's DOM.
+     *
+     * @return {void} Nothing
      */
     disconnectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
