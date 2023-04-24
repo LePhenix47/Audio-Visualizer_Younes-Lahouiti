@@ -597,14 +597,14 @@ const cssReset = /*css*/ `
 }
 
 button {
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 25px;
     border-color: transparent;
     background-color: transparent;
-
     font-family: inherit;
     color: inherit;
-
-
-    
+    outline: 2px solid white;
 }
 button:hover {
     cursor: pointer;
@@ -981,6 +981,11 @@ audioPlayerTemplateElement.innerHTML = /* html */ `
   
   ${audioPlayerTemplateHTMLContent}
 `;
+/**
+ * A custom web component for audio player.
+ *
+ * @extends {HTMLElement}
+ */
 class AudioPlayer extends HTMLElement {
     constructor() {
         super();
@@ -990,7 +995,11 @@ class AudioPlayer extends HTMLElement {
         shadowRoot.appendChild(clonedTemplate);
     }
     /**
-     *Static method used to store the array of all the custom attributes of the component
+     * An array of attribute names to observe for changes.
+     *
+     * @readonly
+     * @static
+     * @type {string[]}
      */
     static get observedAttributes() {
         //We indicate the list of attributes that the custom element wants to observe for changes.
@@ -1008,62 +1017,130 @@ class AudioPlayer extends HTMLElement {
      * Setters and getters
      * */
     //"title"
+    /**
+     * Gets the value of the "title" attribute.
+     *
+     * @returns {string} The value of the "title" attribute.
+     */
     get title() {
         return this.getAttribute("title");
     }
+    /**
+     * Sets the value of the "title" attribute.
+     *
+     * @param {string} value - The new value of the "title" attribute.
+     */
     set title(value) {
         this.setAttribute("title", value);
     }
     //"is-playing"
+    /**
+     * Gets the value of the "is-playing" attribute.
+     *
+     * @returns {string} The value of the "is-playing" attribute.
+     */
     get isPlaying() {
         return this.getAttribute("is-playing");
     }
+    /**
+     * Sets the value of the "is-playing" attribute.
+     *
+     * @param {string} value - The new value of the "is-playing" attribute.
+     */
     set isPlaying(value) {
         this.setAttribute("is-playing", value);
     }
     //"current-time"
+    /**
+     * Gets the value of the "current-time" attribute.
+     *
+     * @returns {string} The value of the "current-time" attribute.
+     */
     get currentTime() {
         return this.getAttribute("current-time");
     }
+    /**
+     * Sets the value of the "is-playing" attribute.
+     *
+     * @param {string} value - The new value of the "is-playing" attribute.
+     */
     set currentTime(value) {
         this.setAttribute("current-time", value);
     }
     //"total-time"
+    /**
+     * Gets the value of the "total-time" attribute.
+     *
+     * @returns {string} The value of the "total-time" attribute.
+     */
     get totalTime() {
         return this.getAttribute("total-time");
     }
+    /**
+     * Sets the value of the "total-time" attribute.
+     *
+     * @param {string} value - The new value of the "total-time" attribute.
+     */
     set totalTime(value) {
         this.setAttribute("total-time", value);
     }
     //"volume"
+    /**
+     * Gets the value of the "volume" attribute.
+     *
+     * @returns {string} The value of the "volume" attribute.
+     */
     get volume() {
         return this.getAttribute("volume");
     }
+    /**
+     * Sets the value of the "volume" attribute.
+     *
+     * @param {string} value - The new value of the "volume" attribute.
+     */
     set volume(value) {
         this.setAttribute("volume", value);
     }
     //"is-muted"
+    /**
+     * Gets the value of the "is-muted" attribute.
+     *
+     * @returns {string} The value of the "is-muted" attribute.
+     */
     get isMuted() {
         return this.getAttribute("is-muted");
     }
+    /**
+     * Sets the value of the "is-muted" attribute.
+     *
+     * @param {string} value - The new value of the "is-muted" attribute.
+     */
     set isMuted(value) {
         this.setAttribute("is-muted", value);
     }
     /**
-     * Methods to handle events
+     * Event listener for drag over events.
+     *
+     * @param {DragEvent} event - The drag event.
      */
     handleDragOver(event) {
         event.preventDefault();
         addClass(event.currentTarget, "active");
     }
+    /**
+     * Event listener for drag leave events.
+     *
+     * @param {DragEvent} event - The drag event.
+     */
     handleDragLeave(event) {
         event.preventDefault();
         removeClass(event.currentTarget, "active");
     }
     /**
-     * Handles uploading audio files from a drop event.
-     * @param {DragEvent} event - The drop event.
-     * @returns {any} - Returns nothing.
+     * Event listener for drop events when uploading audio files.
+     *
+     * @param {DragEvent} event - The drag event.
+     * @returns {Promise<void>} - A promise that resolves once the audio file is uploaded.
      */
     uploadAudioDrop(event) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -1074,6 +1151,12 @@ class AudioPlayer extends HTMLElement {
             showAudioPlayer(componentHost, fileUploaded);
         });
     }
+    /**
+     * Event listener for input events when uploading audio files.
+     *
+     * @param {Event} event - The input event.
+     * @returns {Promise<void>} - A promise that resolves once the audio file is uploaded.
+     */
     uploadAudioInput(event) {
         return __awaiter(this, void 0, void 0, function* () {
             //@ts-ignore
@@ -1083,6 +1166,11 @@ class AudioPlayer extends HTMLElement {
             showAudioPlayer(componentHost, fileUploaded);
         });
     }
+    /**
+     * Event listener for play/pause button clicks.
+     *
+     * @param {PointerEvent} event - The pointer event.
+     */
     playPause(event) {
         //@ts-ignore
         const button = event.currentTarget;
@@ -1097,6 +1185,11 @@ class AudioPlayer extends HTMLElement {
             modifyAttribute(shadowRoot, "is-playing", true);
         }
     }
+    /**
+     * Event listener for volume slider input events.
+     *
+     * @param {InputEvent} event - The input event.
+     */
     setVolume(e) {
         // @ts-ignore
         const valueOfInput = Number(e.target.value);
@@ -1133,6 +1226,37 @@ class AudioPlayer extends HTMLElement {
             addClass(mutedIcon, "hide");
         }
     }
+    /**
+     * Event listener for navigation dragger pointer events.
+     *
+     * @param {PointerEvent} event - The pointer event.
+     */
+    setNavigationDragger(event) {
+        const mp3Container = getAncestor(event.currentTarget, "section");
+        const shadowRoot = getComponentHost(mp3Container);
+        const audioSource = selectQuery("audio", mp3Container);
+        // Get the position and width of the placeholder progress bar element
+        const { left, width } = this.getBoundingClientRect();
+        // Get the X position of the click
+        const mouseXPosition = event.x;
+        // Calculate the X position of the placeholder progress bar element
+        const barXPosition = left;
+        // Calculate the offset of the X position of the click from the X position of the placeholder progress bar
+        const axisXPositionOffset = mouseXPosition - barXPosition;
+        // Get the total width of the placeholder progress bar
+        const widthOfBar = width;
+        // Calculate the percentage of the total width that the click occurred at
+        const percentage = axisXPositionOffset / widthOfBar;
+        // Get the total time of the audio
+        const totalTimeAudio = getAudioTotalTime(audioSource);
+        const audioNewCurrentTime = percentage * totalTimeAudio;
+        // Set the timestamp of the audio source based on the calculated percentage
+        setTimestampAudio(audioSource, audioNewCurrentTime);
+    }
+    //Web component methods
+    /**
+     * Invoked each time the custom element is appended into a document-connected element.
+     */
     connectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
         labelDropZoneArea.addEventListener("dragover", this.handleDragOver);
@@ -1152,22 +1276,15 @@ class AudioPlayer extends HTMLElement {
         });
         const sliderInput = selectQuery(".index__audio-player--slider", this.shadowRoot);
         sliderInput.addEventListener("input", this.setVolume);
-        const progressBar = selectQuery(".index__audio-player--progress-bar", this.shadowRoot);
-        progressBar.addEventListener("click", (event) => {
-            const { left, width } = this.getBoundingClientRect();
-            const mouseXPosition = event.x;
-            const barXPosition = Math.ceil(left);
-            const axisXPosition = mouseXPosition - barXPosition;
-            const widthOfBar = Math.ceil(width);
-            const percentage = axisXPosition / widthOfBar;
-            console_functions_log({ barXPosition, mouseXPosition, axisXPosition, widthOfBar }, percentage);
-            const totalTimeAudio = Number(this.totalTime);
-            setTimestampAudio(audioSource, percentage * totalTimeAudio);
-        });
+        const placeholderProgressBar = selectQuery(".index__audio-player--progress-bar", this.shadowRoot);
+        placeholderProgressBar.addEventListener("click", this.setNavigationDragger);
         /**
          * Need to remove the event listeners on the disconnectedCallback() ↑
          * */
     }
+    /**
+     * Invoked each time the custom element is disconnected from the document's DOM.
+     */
     disconnectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
         labelDropZoneArea.removeEventListener("dragover", this.handleDragOver);
@@ -1175,7 +1292,27 @@ class AudioPlayer extends HTMLElement {
         labelDropZoneArea.removeEventListener("drop", this.uploadAudioDrop);
         const inputFile = selectQuery(".index__file-input", this.shadowRoot);
         inputFile.removeEventListener("change", this.uploadAudioInput);
+        const playPauseAudioButton = selectQuery(".index__audio-player--button", this.shadowRoot);
+        playPauseAudioButton.removeEventListener("click", this.playPause);
+        const audioSource = selectQuery("audio", this.shadowRoot);
+        audioSource.removeEventListener("timeupdate", (e) => {
+            const seconds = Math.trunc(getAudioCurrentTime(audioSource));
+            this.currentTime = seconds.toString();
+        });
+        const sliderInput = selectQuery(".index__audio-player--slider", this.shadowRoot);
+        sliderInput.removeEventListener("input", this.setVolume);
+        const placeholderProgressBar = selectQuery(".index__audio-player--progress-bar", this.shadowRoot);
+        placeholderProgressBar.removeEventListener("click", this.setNavigationDragger);
     }
+    /**
+     * Invoked each time one of the custom element's attributes is added, removed, or changed.
+     *
+     * @param {string} name - The name of the attribute that was changed.
+     * @param {string|null} oldValue - The previous value of the attribute, or null if it was added.
+     * @param {string|null} newValue - The new value of the attribute, or null if it was removed.
+     *
+     * @returns {Promise<void>} - A promise that resolves once the changes have been processed.
+     */
     attributeChangedCallback(name, oldValue, newValue) {
         return __awaiter(this, void 0, void 0, function* () {
             const audioSourceElement = selectQuery("audio", this.shadowRoot);
@@ -1286,6 +1423,14 @@ class AudioPlayer extends HTMLElement {
     }
 }
 customElements.define("audio-player", AudioPlayer);
+/**
+ * Checks if a given file has the expected type.
+ *
+ * @param {File} fileUploaded - The file to check its type.
+ * @param {string} typeExpected - The expected type of the file.
+ *
+ * @returns {Promise<boolean>} - A Promise that resolves to a boolean indicating whether the file has the expected type or not.
+ */
 function checkFileType(fileUploaded, typeExpected) {
     return __awaiter(this, void 0, void 0, function* () {
         const { lastModified, name, type, size } = fileUploaded;
@@ -1293,6 +1438,14 @@ function checkFileType(fileUploaded, typeExpected) {
         return fileType === typeExpected;
     });
 }
+/**
+ * Shows the audio player after validating and transforming the audio file to base64.
+ *
+ * @param {ShadowRoot} componentHost - The ShadowRoot of the web component.
+ * @param {File} fileUploaded - The audio file to be uploaded and played.
+ *
+ * @returns {Promise<void>} - A Promise that resolves after showing the audio player or an error message.
+ */
 function showAudioPlayer(componentHost, fileUploaded) {
     return __awaiter(this, void 0, void 0, function* () {
         console_functions_log("test", { componentHost }, { fileUploaded });
