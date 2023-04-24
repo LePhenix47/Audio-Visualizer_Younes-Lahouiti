@@ -4,145 +4,6 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
 (() => {
 
-;// CONCATENATED MODULE: ./src/utils/functions/audio.functions.ts
-
-/**
- * Plays the audio element
- * @param {HTMLAudioElement} audio - The HTML audio element to be played
- */
-function playAudio(audio) {
-    audio === null || audio === void 0 ? void 0 : audio.play();
-}
-/**
- * Pauses the audio element
- * @param {HTMLAudioElement} audio - The HTML audio element to be paused
- */
-function pauseAudio(audio) {
-    audio === null || audio === void 0 ? void 0 : audio.pause();
-}
-/**
- * Sets the volume of an audio element
- * @param {HTMLAudioElement} audio - The audio element to set the volume for
- * @param {number} volume - The volume level to set (between 0 and 1)
- */
-function setAudioVolume(audio, volume) {
-    audio.volume = volume;
-}
-/**
- * Sets to a specific timestamp in an audio element
- * @param {HTMLAudioElement} audio - The audio element to seek
- * @param {number} time - The time to seek to (in seconds)
- */
-function setTimestampAudio(audio, time) {
-    audio.currentTime = time;
-}
-/**
- * Returns the current time (in seconds) of an audio element
- * @param {HTMLAudioElement} audio - The audio element to get the current time from
- * @returns {number} The current time of the audio element (in seconds)
- */
-function getAudioCurrentTime(audio) {
-    return audio === null || audio === void 0 ? void 0 : audio.currentTime;
-}
-/**
- * Gets the duration of an audio file in seconds
- *
- * @param {HTMLAudioElement} audio - The audio element to get the duration from
- * @returns {number} The duration of the audio file in seconds (returns 0 if it's not available)
- */
-function getAudioTotalTime(audio) {
-    return isNaN(audio === null || audio === void 0 ? void 0 : audio.duration) ? 0 : audio === null || audio === void 0 ? void 0 : audio.duration;
-}
-/**
- * Checks if an audio element has paused
- * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
- * @returns Boolean value telling whether or not the audio is paused
- */
-function checkIfAudioPaused(audio) {
-    return audio === null || audio === void 0 ? void 0 : audio.paused;
-}
-/**
- * Checks if an audio element has ended
- * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
- * @returns Boolean value telling whether or not the audio has ended
- */
-function checkIfAudioEnded(audio) {
-    return audio === null || audio === void 0 ? void 0 : audio.ended;
-}
-/**
- * Formats a given amount of seconds into a time object containing formatted hours, minutes and seconds
- * If the time is over an hour but under 10 minutes, the minutes are also formatted
- *
- * @param {number} seconds - The amount of seconds to format
- * @returns {{seconds: string, minutes: string, hours: string}} - A time object containing formatted hours, minutes and seconds
- */
-function formatTimeValues(seconds) {
-    // Calculate the unformatted minutes and seconds
-    const unformattedSeconds = Math.trunc(seconds % 60);
-    const unformattedMinutes = Math.trunc((seconds / 60) % 60);
-    const unformattedHours = Math.trunc(seconds / 3600);
-    // Format the seconds
-    const formattedSeconds = unformattedSeconds >= 10
-        ? unformattedSeconds.toString()
-        : `0${unformattedSeconds}`;
-    // Format the minutes
-    let formattedMinutes = unformattedMinutes.toString();
-    //Format the hours
-    const formattedHours = unformattedHours.toString();
-    // Check if the time is over an hour and under 10 minutes
-    const isOverAnHour = unformattedHours > 0;
-    const isUnderTenMinutes = unformattedMinutes < 10;
-    // If the time is over an hour but under 10 minutes, format the minutes
-    if (isOverAnHour && isUnderTenMinutes) {
-        formattedMinutes =
-            unformattedMinutes > 10
-                ? unformattedMinutes.toString()
-                : `0${unformattedMinutes}`;
-    }
-    // Return the formatted time object
-    return {
-        hours: formattedHours,
-        minutes: formattedMinutes,
-        seconds: formattedSeconds,
-    };
-}
-/**
- * Creates an AudioContext and an AnalyserNode to analyze the frequency data of an HTMLAudioElement
- *
- * @param {HTMLAudioElement} audioElement - The HTMLAudioElement to be analyzed
- * @param {number} amountOfAudioSamples - The number of audio samples to be analyzed between 16 and 32_768
- *
- * @returns {Uint8Array} - An unsigned 8-bit integer array with the frequency data of the audio
- */
-function createAudioAnalyzer(audioElement, amountOfAudioSamples) {
-    // Create the AudioContext
-    const audioContext = new AudioContext();
-    // Create an audio node from the <audio> element
-    const audioNodeSource = audioContext.createMediaElementSource(audioElement);
-    // Create the analyzer, connect it to the audio node source and connect the analyzer to the audio context destination
-    const analyzer = audioContext.createAnalyser();
-    audioNodeSource.connect(analyzer);
-    analyzer.connect(audioContext.destination);
-    // Set the number of audio sample frequencies with the FFT (Fast Fourier Transform) method
-    //Btw here's an amazing explanation explaining what the FFT is useful for: https://www.youtube.com/watch?v=nmgFG7PUHfo
-    const amountIsOutOfRange = !isInRangePowerOfTwo(amountOfAudioSamples, 4, 15).isWithinRange;
-    if (amountIsOutOfRange) {
-        analyzer.fftSize = 64;
-        throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";
-    }
-    analyzer.fftSize = amountOfAudioSamples;
-    // Create an unsigned 8-bit integer array with the frequency data from the analyzer
-    const bufferLength = analyzer.frequencyBinCount;
-    const frequencyDataArray = new Uint8Array(bufferLength);
-    return frequencyDataArray;
-}
-
-;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
-/**
- * The console methods are exported as separate methods through destructuring
- */
-const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
-
 ;// CONCATENATED MODULE: ./src/utils/functions/dom.functions.ts
 /**
  * A simplified version of `document.querySelector()`
@@ -343,6 +204,148 @@ function removeClass(element, className) {
 function replaceClass(element, oldClassName, newClassName) {
     element.classList.replace(oldClassName, newClassName);
 }
+
+;// CONCATENATED MODULE: ./src/utils/functions/audio.functions.ts
+
+/**
+ * Plays the audio element
+ * @param {HTMLAudioElement} audio - The HTML audio element to be played
+ */
+function playAudio(audio) {
+    audio === null || audio === void 0 ? void 0 : audio.play();
+}
+/**
+ * Pauses the audio element
+ * @param {HTMLAudioElement} audio - The HTML audio element to be paused
+ */
+function pauseAudio(audio) {
+    audio === null || audio === void 0 ? void 0 : audio.pause();
+}
+/**
+ * Sets the volume of an audio element
+ * @param {HTMLAudioElement} audio - The audio element to set the volume for
+ * @param {number} volume - The volume level to set (between 0 and 1)
+ */
+function setAudioVolume(audio, volume) {
+    audio.volume = volume;
+}
+/**
+ * Sets to a specific timestamp in an audio element
+ * @param {HTMLAudioElement} audio - The audio element to seek
+ * @param {number} time - The time to seek to (in seconds)
+ */
+function setTimestampAudio(audio, time) {
+    audio.currentTime = time;
+}
+/**
+ * Returns the current time (in seconds) of an audio element
+ * @param {HTMLAudioElement} audio - The audio element to get the current time from
+ * @returns {number} The current time of the audio element (in seconds)
+ */
+function getAudioCurrentTime(audio) {
+    return audio === null || audio === void 0 ? void 0 : audio.currentTime;
+}
+/**
+ * Gets the duration of an audio file in seconds
+ *
+ * @param {HTMLAudioElement} audio - The audio element to get the duration from
+ * @returns {number} The duration of the audio file in seconds (returns 0 if it's not available)
+ */
+function getAudioTotalTime(audio) {
+    return isNaN(audio === null || audio === void 0 ? void 0 : audio.duration) ? 0 : audio === null || audio === void 0 ? void 0 : audio.duration;
+}
+/**
+ * Checks if an audio element has paused
+ * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
+ * @returns Boolean value telling whether or not the audio is paused
+ */
+function checkIfAudioPaused(audio) {
+    return audio === null || audio === void 0 ? void 0 : audio.paused;
+}
+/**
+ * Checks if an audio element has ended
+ * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
+ * @returns Boolean value telling whether or not the audio has ended
+ */
+function checkIfAudioEnded(audio) {
+    return audio === null || audio === void 0 ? void 0 : audio.ended;
+}
+/**
+ * Formats a given amount of seconds into a time object containing formatted hours, minutes and seconds
+ * If the time is over an hour but under 10 minutes, the minutes are also formatted
+ *
+ * @param {number} seconds - The amount of seconds to format
+ * @returns {{seconds: string, minutes: string, hours: string}} - A time object containing formatted hours, minutes and seconds
+ */
+function formatTimeValues(seconds) {
+    // Calculate the unformatted minutes and seconds
+    const unformattedSeconds = Math.trunc(seconds % 60);
+    const unformattedMinutes = Math.trunc((seconds / 60) % 60);
+    const unformattedHours = Math.trunc(seconds / 3600);
+    // Format the seconds
+    const formattedSeconds = unformattedSeconds >= 10
+        ? unformattedSeconds.toString()
+        : `0${unformattedSeconds}`;
+    // Format the minutes
+    let formattedMinutes = unformattedMinutes.toString();
+    //Format the hours
+    const formattedHours = unformattedHours.toString();
+    // Check if the time is over an hour and under 10 minutes
+    const isOverAnHour = unformattedHours > 0;
+    const isUnderTenMinutes = unformattedMinutes < 10;
+    // If the time is over an hour but under 10 minutes, format the minutes
+    if (isOverAnHour && isUnderTenMinutes) {
+        formattedMinutes =
+            unformattedMinutes > 10
+                ? unformattedMinutes.toString()
+                : `0${unformattedMinutes}`;
+    }
+    // Return the formatted time object
+    return {
+        hours: formattedHours,
+        minutes: formattedMinutes,
+        seconds: formattedSeconds,
+    };
+}
+/**
+ * Creates an AudioContext and an AnalyserNode to analyze the frequency data of an HTMLAudioElement
+ *
+ * @param {HTMLAudioElement} audioElement - The HTMLAudioElement to be analyzed
+ * @param {number} amountOfAudioSamples - The number of audio samples to be analyzed between 16 and 32_768
+ *
+ * @returns {analyzer: AnalyserNode, frequencyDataArray: Uint8Array}} - An unsigned 8-bit integer array with the frequency data of the audio
+ */
+function createDataAndAudioAnalyzer(audioElement, amountOfAudioSamples) {
+    // Create the AudioContext
+    const audioContext = new AudioContext();
+    // Create an audio node from the <audio> element
+    const audioNodeSource = audioContext.createMediaElementSource(audioElement);
+    // Create the analyzer, connect it to the audio node source and connect the analyzer to the audio context destination
+    const analyzer = audioContext.createAnalyser();
+    audioNodeSource.connect(analyzer);
+    analyzer.connect(audioContext.destination);
+    // Set the number of audio sample frequencies with the FFT (Fast Fourier Transform) method
+    //Btw here's an amazing explanation explaining what the FFT is useful for: https://www.youtube.com/watch?v=nmgFG7PUHfo
+    const amountIsOutOfRange = !isInRangePowerOfTwo(amountOfAudioSamples, 4, 15).isWithinRange;
+    if (amountIsOutOfRange) {
+        analyzer.fftSize = 64;
+        throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";
+    }
+    analyzer.fftSize = amountOfAudioSamples;
+    // Create an unsigned 8-bit integer array with the frequency data from the analyzer
+    const bufferLength = analyzer.frequencyBinCount;
+    const frequencyDataArray = new Uint8Array(bufferLength);
+    return {
+        analyzer,
+        frequencyDataArray,
+    };
+}
+
+;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
+/**
+ * The console methods are exported as separate methods through destructuring
+ */
+const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
 
 ;// CONCATENATED MODULE: ./src/utils/functions/file.functions.ts
 /**
@@ -1631,8 +1634,60 @@ function hidePlayer(componentHost) {
 }
 
 ;// CONCATENATED MODULE: ./src/index.ts
+
 //Components
 
+const barsCanvas = selectQuery(".index__canvas--bars");
+const barsCanvasContext = barsCanvas.getContext("2d");
+const mp3WebComponent = selectQuery("audio-player");
+const audioElement = selectQuery("audio", mp3WebComponent);
+const audioContext = new AudioContext();
+const main = selectQuery("main");
+// When the window is resized, update the canvas dimensions and clear the canvas
+const { height, width } = main.getBoundingClientRect();
+barsCanvas.width = width;
+barsCanvas.height = height;
+window.addEventListener("resize", () => {
+    const { height, width } = main.getBoundingClientRect();
+    barsCanvas.width = width;
+    barsCanvas.height = height;
+});
+// Create an audio node from the <audio> element
+const audioNodeSource = audioContext.createMediaElementSource(audioElement);
+// Create the analyzer, connect it to the audio node source and connect the analyzer to the audio context destination
+const analyzer = audioContext.createAnalyser();
+audioNodeSource.connect(analyzer);
+analyzer.connect(audioContext.destination);
+// Set the number of audio sample frequencies with the FFT (Fast Fourier Transform) method
+//Btw here's an amazing explanation explaining what the FFT is useful for: https://www.youtube.com/watch?v=nmgFG7PUHfo
+// const amountIsOutOfRange: boolean = !isInRangePowerOfTwo(16, 4, 15)
+//   .isWithinRange;
+// if (amountIsOutOfRange) {
+//   analyzer.fftSize = 64;
+//   throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";
+// }
+analyzer.fftSize = 128;
+function animate() {
+    // Create an unsigned 8-bit integer array with the frequency data from the analyzer
+    const bufferLength = analyzer.frequencyBinCount;
+    const frequencyDataArray = new Uint8Array(bufferLength);
+    const singleBarWidth = (barsCanvas.width / frequencyDataArray.length) * 2;
+    let xValue = 0;
+    let singleBarHeight = null;
+    barsCanvasContext.clearRect(0, 0, barsCanvas.width, barsCanvas.height);
+    analyzer.getByteFrequencyData(frequencyDataArray);
+    for (let i = 0; i < bufferLength; i++) {
+        singleBarHeight = frequencyDataArray[i] * 2;
+        const red = i * 4 + 100;
+        const green = i * singleBarHeight + 50;
+        const blue = i * singleBarHeight + 50;
+        barsCanvasContext.fillStyle = `rgb(${red},${green},${blue})`;
+        barsCanvasContext.fillRect(xValue, barsCanvas.height - singleBarHeight, singleBarWidth, singleBarHeight);
+        xValue += singleBarWidth;
+    }
+    requestAnimationFrame(animate);
+}
+animate();
 
 })();
 

@@ -21,7 +21,6 @@
         z-index: 1;
 
         &--bars {
-            display: none;
             position: absolute;
             @include absolute-center;
 
@@ -29,6 +28,8 @@
             width: 100%;
 
             outline-offset: -3px;
+
+            z-index: -1;
         }
 
         &--round {

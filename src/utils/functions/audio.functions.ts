@@ -126,12 +126,15 @@ export function formatTimeValues(seconds: number): {
  * @param {HTMLAudioElement} audioElement - The HTMLAudioElement to be analyzed
  * @param {number} amountOfAudioSamples - The number of audio samples to be analyzed between 16 and 32_768
  *
- * @returns {Uint8Array} - An unsigned 8-bit integer array with the frequency data of the audio
+ * @returns {analyzer: AnalyserNode, frequencyDataArray: Uint8Array}} - An unsigned 8-bit integer array with the frequency data of the audio
  */
-export function createAudioAnalyzer(
+export function createDataAndAudioAnalyzer(
   audioElement: HTMLAudioElement,
   amountOfAudioSamples: number
-): Uint8Array {
+): {
+  analyzer: AnalyserNode;
+  frequencyDataArray: Uint8Array;
+} {
   // Create the AudioContext
   const audioContext: AudioContext = new AudioContext();
 
@@ -160,5 +163,8 @@ export function createAudioAnalyzer(
   // Create an unsigned 8-bit integer array with the frequency data from the analyzer
   const bufferLength: number = analyzer.frequencyBinCount;
   const frequencyDataArray: Uint8Array = new Uint8Array(bufferLength);
-  return frequencyDataArray;
+  return {
+    analyzer,
+    frequencyDataArray,
+  };
 }
