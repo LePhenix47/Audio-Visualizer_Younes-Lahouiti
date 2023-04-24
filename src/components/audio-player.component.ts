@@ -1,10 +1,13 @@
 import {
+  checkIfAudioEnded,
+  checkIfAudioPaused,
   formatTimeValues,
   getAudioCurrentTime,
   getAudioTotalTime,
   pauseAudio,
   playAudio,
   setAudioVolume,
+  setTimestampAudio,
 } from "../utils/functions/audio.functions";
 import { log } from "../utils/functions/console.functions";
 import {
@@ -12,6 +15,7 @@ import {
   appendChildToParent,
   getAttribute,
   getComponentHost,
+  getParent,
   modifyAttribute,
   removeClass,
   selectQuery,
@@ -261,7 +265,6 @@ const audioPlayerTemplateStyle = /*css*/ `
 .index__audio-player--current-progress {
     --progress: 0%;
     background-color: #fff;
-    border: 2px solid #000;
     border-radius: inherit;
     display: inline-block !important;
     max-width: 100%;
@@ -422,7 +425,7 @@ const audioPlayerTemplateHTMLContent = /*html */ `
                 </div>
                 <div class="index__audio-player--volume">
                     <button class="index__audio-player--mute" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="index__audio-player--mutd-volume-icon hide" fill="currentColor" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="index__audio-player--muted-volume-icon hide" fill="currentColor" height="16" width="16">
                             <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/>
                         </svg>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="index__audio-player--low-volume-icon hide" fill="currentColor" height="16" width="16">
@@ -457,6 +460,71 @@ export class AudioPlayer extends HTMLElement {
       audioPlayerTemplateElement.content.cloneNode(true);
     //We add it as a child of our web component
     shadowRoot.appendChild(clonedTemplate);
+  }
+  /**
+   *Static method used to store the array of all the custom attributes of the component
+   */
+  static get observedAttributes(): string[] {
+    //We indicate the list of attributes that the custom element wants to observe for changes.
+    return [
+      "title",
+      "is-playing",
+      "current-time",
+      "total-time",
+      "volume",
+      "is-muted",
+    ];
+  }
+  /**
+   *
+   * Setters and getters
+   * */
+  //"title"
+  get title(): string {
+    return this.getAttribute("title");
+  }
+  set title(value: string) {
+    this.setAttribute("title", value);
+  }
+
+  //"is-playing"
+  get isPlaying(): string {
+    return this.getAttribute("is-playing");
+  }
+  set isPlaying(value: string) {
+    this.setAttribute("is-playing", value);
+  }
+
+  //"current-time"
+  get currentTime(): string {
+    return this.getAttribute("current-time");
+  }
+  set currentTime(value: string) {
+    this.setAttribute("current-time", value);
+  }
+
+  //"total-time"
+  get totalTime(): string {
+    return this.getAttribute("total-time");
+  }
+  set totalTime(value: string) {
+    this.setAttribute("total-time", value);
+  }
+
+  //"volume"
+  get volume(): string {
+    return this.getAttribute("volume");
+  }
+  set volume(value: string) {
+    this.setAttribute("volume", value);
+  }
+
+  //"is-muted"
+  get isMuted(): string {
+    return this.getAttribute("is-muted");
+  }
+  set isMuted(value: string) {
+    this.setAttribute("is-muted", value);
   }
 
   /**
@@ -499,132 +567,76 @@ export class AudioPlayer extends HTMLElement {
     showAudioPlayer(componentHost, fileUploaded);
   }
 
-  playPause(event: Event) {
-    log("Click!");
+  playPause(event: Event): void {
     //@ts-ignore
     const button: HTMLButtonElement = event.currentTarget;
 
     const shadowRoot: ShadowRoot = getComponentHost(button);
-
-    const playSVG: SVGElement = selectQuery(
-      ".index__audio-player--play-icon",
-      button
-    );
 
     const pauseSVG: SVGElement = selectQuery(
       ".index__audio-player--pause-icon",
       button
     );
 
-    const restartSVG: SVGElement = selectQuery(
-      ".index__audio-player--restart-icon",
-      button
+    const shownIcon: SVGElement = selectQuery("svg:not(.hide)", button);
+
+    const isPaused: boolean = shownIcon === pauseSVG;
+    if (isPaused) {
+      modifyAttribute(shadowRoot, "is-playing", false);
+    } else {
+      modifyAttribute(shadowRoot, "is-playing", true);
+    }
+  }
+
+  setVolume(e: InputEvent) {
+    // @ts-ignore
+    const valueOfInput: number = Number(e.target.value);
+    const shadowRoot: ShadowRoot = getComponentHost(e.currentTarget);
+
+    const hasHighVolume: boolean = valueOfInput >= 50;
+    const hasLowVolume: boolean = valueOfInput < 50 && valueOfInput !== 0;
+    const hasNoVolume: boolean = valueOfInput === 0;
+
+    const mutedIcon = selectQuery(
+      ".index__audio-player--muted-volume-icon",
+      shadowRoot
+    );
+    const lowVolumeIcon = selectQuery(
+      ".index__audio-player--low-volume-icon",
+      shadowRoot
+    );
+    const highVolumeIcon = selectQuery(
+      ".index__audio-player--high-volume-icon",
+      shadowRoot
     );
 
-    const shownSvg: SVGElement = selectQuery("svg:not(.hide)", button);
-
-    const needToPlay: boolean = shownSvg === playSVG;
-    const needToPause: boolean = shownSvg === pauseSVG;
-    const needToRestartAndPause: boolean = shownSvg === restartSVG;
-
-    log({
-      needToPlay,
-      needToPause,
-      needToRestartAndPause,
-    });
-
-    function showOnlyPlayIcon() {
-      modifyAttribute(shadowRoot, "is-playing", false);
-      addClass(pauseSVG, "hide");
-      addClass(restartSVG, "hide");
-      removeClass(playSVG, "hide");
+    if (hasHighVolume) {
+      showHighVolumeIcon();
+    } else if (hasLowVolume) {
+      showLowVolumeIcon();
+    } else if (hasNoVolume) {
+      showMutedIcon();
     }
 
-    function showOnlyPauseIcon() {
-      modifyAttribute(shadowRoot, "is-playing", true);
-      addClass(playSVG, "hide");
-      addClass(restartSVG, "hide");
-      removeClass(pauseSVG, "hide");
+    modifyAttribute(shadowRoot, "volume", valueOfInput);
+
+    function showMutedIcon() {
+      removeClass(mutedIcon, "hide");
+      addClass(lowVolumeIcon, "hide");
+      addClass(highVolumeIcon, "hide");
     }
 
-    function showOnlyRestartIcon() {
-      modifyAttribute(shadowRoot, "is-playing", false);
-      addClass(playSVG, "hide");
-      addClass(pauseSVG, "hide");
-      removeClass(restartSVG, "hide");
+    function showLowVolumeIcon() {
+      removeClass(lowVolumeIcon, "hide");
+      addClass(mutedIcon, "hide");
+      addClass(highVolumeIcon, "hide");
     }
-    if (needToPlay) {
-      showOnlyPauseIcon();
-    } else if (needToPause) {
-      showOnlyPlayIcon();
-    } else if (needToRestartAndPause) {
-      showOnlyRestartIcon();
-    } else {
-      throw "Unknown error: No boolean check passed";
+
+    function showHighVolumeIcon() {
+      removeClass(highVolumeIcon, "hide");
+      addClass(lowVolumeIcon, "hide");
+      addClass(mutedIcon, "hide");
     }
-  }
-
-  setVolume(value: number) {
-    this.volume = value.toString();
-  }
-  /**
-   *Static method used to store the array of all the custom attributes of the component
-   */
-  static get observedAttributes() {
-    //We indicate the list of attributes that the custom element wants to observe for changes.
-    return [
-      "title",
-      "is-playing",
-      "current-time",
-      "total-time",
-      "volume",
-      "is-muted",
-    ];
-  }
-  /**
-   *
-   * Setters and getters
-   * */
-  get title() {
-    return this.getAttribute("title");
-  }
-  set title(value: string) {
-    this.setAttribute("title", value);
-  }
-
-  get isPlaying() {
-    return this.getAttribute("is-playing");
-  }
-  set isPlaying(value: string) {
-    this.setAttribute("is-playing", value);
-  }
-
-  get currentTime() {
-    return this.getAttribute("current-time");
-  }
-  set currentTime(value: string) {
-    this.setAttribute("current-time", value);
-  }
-
-  get totalTime() {
-    return this.getAttribute("total-time");
-  }
-  set totalTime(value: string) {
-    this.setAttribute("total-time", value);
-  }
-
-  get volume() {
-    return this.getAttribute("volume");
-  }
-  set volume(value: string) {
-    this.setAttribute("volume", value);
-  }
-
-  get isMuted() {
-    return this.getAttribute("is-muted");
-  }
-  set isMuted(value: string) {
-    this.setAttribute("is-muted", value);
   }
 
   connectedCallback() {
@@ -645,7 +657,7 @@ export class AudioPlayer extends HTMLElement {
     inputFile.addEventListener("change", this.uploadAudioInput);
 
     /**
-     * Need to remove the event listeners on the disconnectedCallback()
+     * Need to remove the event listeners on the disconnectedCallback() ↓
      */
     const playPauseAudioButton: HTMLButtonElement = selectQuery(
       ".index__audio-player--button",
@@ -664,11 +676,34 @@ export class AudioPlayer extends HTMLElement {
       ".index__audio-player--slider",
       this.shadowRoot
     );
-    sliderInput.addEventListener("input", (e: InputEvent) => {
-      //@ts-ignore
-      const valueOfInput = e.target.value;
-      this.setVolume(valueOfInput);
+    sliderInput.addEventListener("input", this.setVolume);
+
+    const progressBar = selectQuery(
+      ".index__audio-player--progress-bar",
+      this.shadowRoot
+    );
+
+    progressBar.addEventListener("click", (event: PointerEvent) => {
+      const { left, width }: DOMRect = this.getBoundingClientRect();
+      const mouseXPosition: number = event.x;
+
+      const barXPosition: number = Math.ceil(left);
+
+      const axisXPosition: number = mouseXPosition - barXPosition;
+      const widthOfBar: number = Math.ceil(width);
+
+      const percentage: number = axisXPosition / widthOfBar;
+      log(
+        { barXPosition, mouseXPosition, axisXPosition, widthOfBar },
+        percentage
+      );
+
+      const totalTimeAudio = Number(this.totalTime);
+      setTimestampAudio(audioSource, percentage * totalTimeAudio);
     });
+    /**
+     * Need to remove the event listeners on the disconnectedCallback() ↑
+     * */
   }
 
   disconnectedCallback() {
@@ -704,10 +739,8 @@ export class AudioPlayer extends HTMLElement {
       this.shadowRoot
     );
 
-    audioSourceElement.addEventListener("loadeddata", () => {});
     switch (name) {
       case "title": {
-        log({ name, oldValue, newValue });
         const titleOfPlayer: HTMLHeadingElement = selectQuery(
           ".index__audio-player--name",
           this.shadowRoot
@@ -718,12 +751,60 @@ export class AudioPlayer extends HTMLElement {
         break;
       }
       case "is-playing": {
-        log("Play-pause button clicked!");
-        const isPlaying: boolean = newValue === "true";
-        if (isPlaying) {
+        //@ts-ignore
+        const button: HTMLButtonElement = selectQuery(
+          ".index__audio-player--button",
+          mp3PlayerSection
+        );
+
+        const playSVG: SVGElement = selectQuery(
+          ".index__audio-player--play-icon",
+          button
+        );
+
+        const pauseSVG: SVGElement = selectQuery(
+          ".index__audio-player--pause-icon",
+          button
+        );
+
+        const restartSVG: SVGElement = selectQuery(
+          ".index__audio-player--restart-icon",
+          button
+        );
+
+        const isNowPlaying: boolean = newValue === "true";
+
+        const isNowNeedingToRestart: boolean =
+          newValue === "false" && checkIfAudioEnded(audioSourceElement);
+        if (isNowPlaying) {
+          // Audio was paused and now needs to play.
+          showOnlyPauseIcon();
           playAudio(audioSourceElement);
+        } else if (isNowNeedingToRestart) {
+          // Audio was playing, has ended, and is now paused.
+          showOnlyRestartIcon();
         } else {
+          // Audio was playing and didn't end, now needs to pause.
+          showOnlyPlayIcon();
           pauseAudio(audioSourceElement);
+        }
+
+        function showOnlyPlayIcon() {
+          addClass(pauseSVG, "hide");
+          addClass(restartSVG, "hide");
+          removeClass(playSVG, "hide");
+        }
+
+        function showOnlyPauseIcon() {
+          addClass(playSVG, "hide");
+          addClass(restartSVG, "hide");
+          removeClass(pauseSVG, "hide");
+        }
+
+        function showOnlyRestartIcon() {
+          addClass(playSVG, "hide");
+          addClass(pauseSVG, "hide");
+          removeClass(restartSVG, "hide");
         }
         //…
         break;
@@ -767,6 +848,13 @@ export class AudioPlayer extends HTMLElement {
           `${progressPercentage}%`,
           spanProgressBar
         );
+
+        const hasEnded: boolean =
+          checkIfAudioPaused(audioSourceElement) &&
+          checkIfAudioEnded(audioSourceElement);
+        if (hasEnded) {
+          this.isPlaying = "false";
+        }
         //…
         break;
       }

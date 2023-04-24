@@ -54,6 +54,15 @@ export function getAudioTotalTime(audio: HTMLAudioElement): number {
 }
 
 /**
+ * Checks if an audio element has paused
+ * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
+ * @returns Boolean value telling whether or not the audio is paused
+ */
+export function checkIfAudioPaused(audio: HTMLAudioElement): boolean {
+  return audio?.paused;
+}
+
+/**
  * Checks if an audio element has ended
  * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
  * @returns Boolean value telling whether or not the audio has ended

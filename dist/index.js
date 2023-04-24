@@ -53,6 +53,14 @@ function getAudioTotalTime(audio) {
     return isNaN(audio === null || audio === void 0 ? void 0 : audio.duration) ? 0 : audio === null || audio === void 0 ? void 0 : audio.duration;
 }
 /**
+ * Checks if an audio element has paused
+ * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
+ * @returns Boolean value telling whether or not the audio is paused
+ */
+function checkIfAudioPaused(audio) {
+    return audio === null || audio === void 0 ? void 0 : audio.paused;
+}
+/**
  * Checks if an audio element has ended
  * @param {HTMLAudioElement} audio - The HTMLAudioElement to check
  * @returns Boolean value telling whether or not the audio has ended
@@ -147,13 +155,21 @@ function selectQueryAll(query, container) {
  * Function that returns an array containing all child nodes of an HTML element.
  *
  * @param {any} elementOfReference The parent HTML element whose children to select.
- * @returns {Element[]} An array containing all child nodes of the parent element or null if the parent element has no children.
+ * @returns {any[]} An array containing all child nodes of the parent element or null if the parent element has no children.
  */
 function getChildren(elementOfReference) {
     if (!elementOfReference) {
         return [];
     }
     return Array.from(elementOfReference.children);
+}
+/**
+ * Returns the parent element of a given element.
+ * @param {HTMLElement} elementOfReference - The child element for which to find the parent.
+ * @returns {any} - The parent element of the child element, or null if the parent cannot be found.
+ */
+function getParent(elementOfReference) {
+    return elementOfReference.parentElement;
 }
 /**
  * Returns the closest ancestor element of a given HTML element based on a CSS selector.
@@ -782,7 +798,6 @@ const audioPlayerTemplateStyle = /*css*/ `
 .index__audio-player--current-progress {
     --progress: 0%;
     background-color: #fff;
-    border: 2px solid #000;
     border-radius: inherit;
     display: inline-block !important;
     max-width: 100%;
@@ -942,7 +957,7 @@ const audioPlayerTemplateHTMLContent = /*html */ `
                 </div>
                 <div class="index__audio-player--volume">
                     <button class="index__audio-player--mute" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="index__audio-player--mutd-volume-icon hide" fill="currentColor" height="16" width="16">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="index__audio-player--muted-volume-icon hide" fill="currentColor" height="16" width="16">
                             <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/>
                         </svg>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="index__audio-player--low-volume-icon hide" fill="currentColor" height="16" width="16">
@@ -973,6 +988,66 @@ class AudioPlayer extends HTMLElement {
         const clonedTemplate = audioPlayerTemplateElement.content.cloneNode(true);
         //We add it as a child of our web component
         shadowRoot.appendChild(clonedTemplate);
+    }
+    /**
+     *Static method used to store the array of all the custom attributes of the component
+     */
+    static get observedAttributes() {
+        //We indicate the list of attributes that the custom element wants to observe for changes.
+        return [
+            "title",
+            "is-playing",
+            "current-time",
+            "total-time",
+            "volume",
+            "is-muted",
+        ];
+    }
+    /**
+     *
+     * Setters and getters
+     * */
+    //"title"
+    get title() {
+        return this.getAttribute("title");
+    }
+    set title(value) {
+        this.setAttribute("title", value);
+    }
+    //"is-playing"
+    get isPlaying() {
+        return this.getAttribute("is-playing");
+    }
+    set isPlaying(value) {
+        this.setAttribute("is-playing", value);
+    }
+    //"current-time"
+    get currentTime() {
+        return this.getAttribute("current-time");
+    }
+    set currentTime(value) {
+        this.setAttribute("current-time", value);
+    }
+    //"total-time"
+    get totalTime() {
+        return this.getAttribute("total-time");
+    }
+    set totalTime(value) {
+        this.setAttribute("total-time", value);
+    }
+    //"volume"
+    get volume() {
+        return this.getAttribute("volume");
+    }
+    set volume(value) {
+        this.setAttribute("volume", value);
+    }
+    //"is-muted"
+    get isMuted() {
+        return this.getAttribute("is-muted");
+    }
+    set isMuted(value) {
+        this.setAttribute("is-muted", value);
     }
     /**
      * Methods to handle events
@@ -1009,109 +1084,54 @@ class AudioPlayer extends HTMLElement {
         });
     }
     playPause(event) {
-        console_functions_log("Click!");
         //@ts-ignore
         const button = event.currentTarget;
         const shadowRoot = getComponentHost(button);
-        const playSVG = selectQuery(".index__audio-player--play-icon", button);
         const pauseSVG = selectQuery(".index__audio-player--pause-icon", button);
-        const restartSVG = selectQuery(".index__audio-player--restart-icon", button);
-        const shownSvg = selectQuery("svg:not(.hide)", button);
-        const needToPlay = shownSvg === playSVG;
-        const needToPause = shownSvg === pauseSVG;
-        const needToRestartAndPause = shownSvg === restartSVG;
-        console_functions_log({
-            needToPlay,
-            needToPause,
-            needToRestartAndPause,
-        });
-        function showOnlyPlayIcon() {
+        const shownIcon = selectQuery("svg:not(.hide)", button);
+        const isPaused = shownIcon === pauseSVG;
+        if (isPaused) {
             modifyAttribute(shadowRoot, "is-playing", false);
-            addClass(pauseSVG, "hide");
-            addClass(restartSVG, "hide");
-            removeClass(playSVG, "hide");
-        }
-        function showOnlyPauseIcon() {
-            modifyAttribute(shadowRoot, "is-playing", true);
-            addClass(playSVG, "hide");
-            addClass(restartSVG, "hide");
-            removeClass(pauseSVG, "hide");
-        }
-        function showOnlyRestartIcon() {
-            modifyAttribute(shadowRoot, "is-playing", false);
-            addClass(playSVG, "hide");
-            addClass(pauseSVG, "hide");
-            removeClass(restartSVG, "hide");
-        }
-        if (needToPlay) {
-            showOnlyPauseIcon();
-        }
-        else if (needToPause) {
-            showOnlyPlayIcon();
-        }
-        else if (needToRestartAndPause) {
-            showOnlyRestartIcon();
         }
         else {
-            throw "Unknown error: No boolean check passed";
+            modifyAttribute(shadowRoot, "is-playing", true);
         }
     }
-    setVolume(value) {
-        this.volume = value.toString();
-    }
-    /**
-     *Static method used to store the array of all the custom attributes of the component
-     */
-    static get observedAttributes() {
-        //We indicate the list of attributes that the custom element wants to observe for changes.
-        return [
-            "title",
-            "is-playing",
-            "current-time",
-            "total-time",
-            "volume",
-            "is-muted",
-        ];
-    }
-    /**
-     *
-     * Setters and getters
-     * */
-    get title() {
-        return this.getAttribute("title");
-    }
-    set title(value) {
-        this.setAttribute("title", value);
-    }
-    get isPlaying() {
-        return this.getAttribute("is-playing");
-    }
-    set isPlaying(value) {
-        this.setAttribute("is-playing", value);
-    }
-    get currentTime() {
-        return this.getAttribute("current-time");
-    }
-    set currentTime(value) {
-        this.setAttribute("current-time", value);
-    }
-    get totalTime() {
-        return this.getAttribute("total-time");
-    }
-    set totalTime(value) {
-        this.setAttribute("total-time", value);
-    }
-    get volume() {
-        return this.getAttribute("volume");
-    }
-    set volume(value) {
-        this.setAttribute("volume", value);
-    }
-    get isMuted() {
-        return this.getAttribute("is-muted");
-    }
-    set isMuted(value) {
-        this.setAttribute("is-muted", value);
+    setVolume(e) {
+        // @ts-ignore
+        const valueOfInput = Number(e.target.value);
+        const shadowRoot = getComponentHost(e.currentTarget);
+        const hasHighVolume = valueOfInput >= 50;
+        const hasLowVolume = valueOfInput < 50 && valueOfInput !== 0;
+        const hasNoVolume = valueOfInput === 0;
+        const mutedIcon = selectQuery(".index__audio-player--muted-volume-icon", shadowRoot);
+        const lowVolumeIcon = selectQuery(".index__audio-player--low-volume-icon", shadowRoot);
+        const highVolumeIcon = selectQuery(".index__audio-player--high-volume-icon", shadowRoot);
+        if (hasHighVolume) {
+            showHighVolumeIcon();
+        }
+        else if (hasLowVolume) {
+            showLowVolumeIcon();
+        }
+        else if (hasNoVolume) {
+            showMutedIcon();
+        }
+        modifyAttribute(shadowRoot, "volume", valueOfInput);
+        function showMutedIcon() {
+            removeClass(mutedIcon, "hide");
+            addClass(lowVolumeIcon, "hide");
+            addClass(highVolumeIcon, "hide");
+        }
+        function showLowVolumeIcon() {
+            removeClass(lowVolumeIcon, "hide");
+            addClass(mutedIcon, "hide");
+            addClass(highVolumeIcon, "hide");
+        }
+        function showHighVolumeIcon() {
+            removeClass(highVolumeIcon, "hide");
+            addClass(lowVolumeIcon, "hide");
+            addClass(mutedIcon, "hide");
+        }
     }
     connectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
@@ -1121,7 +1141,7 @@ class AudioPlayer extends HTMLElement {
         const inputFile = selectQuery(".index__file-input", this.shadowRoot);
         inputFile.addEventListener("change", this.uploadAudioInput);
         /**
-         * Need to remove the event listeners on the disconnectedCallback()
+         * Need to remove the event listeners on the disconnectedCallback() ↓
          */
         const playPauseAudioButton = selectQuery(".index__audio-player--button", this.shadowRoot);
         playPauseAudioButton.addEventListener("click", this.playPause);
@@ -1131,11 +1151,22 @@ class AudioPlayer extends HTMLElement {
             this.currentTime = seconds.toString();
         });
         const sliderInput = selectQuery(".index__audio-player--slider", this.shadowRoot);
-        sliderInput.addEventListener("input", (e) => {
-            //@ts-ignore
-            const valueOfInput = e.target.value;
-            this.setVolume(valueOfInput);
+        sliderInput.addEventListener("input", this.setVolume);
+        const progressBar = selectQuery(".index__audio-player--progress-bar", this.shadowRoot);
+        progressBar.addEventListener("click", (event) => {
+            const { left, width } = this.getBoundingClientRect();
+            const mouseXPosition = event.x;
+            const barXPosition = Math.ceil(left);
+            const axisXPosition = mouseXPosition - barXPosition;
+            const widthOfBar = Math.ceil(width);
+            const percentage = axisXPosition / widthOfBar;
+            console_functions_log({ barXPosition, mouseXPosition, axisXPosition, widthOfBar }, percentage);
+            const totalTimeAudio = Number(this.totalTime);
+            setTimestampAudio(audioSource, percentage * totalTimeAudio);
         });
+        /**
+         * Need to remove the event listeners on the disconnectedCallback() ↑
+         * */
     }
     disconnectedCallback() {
         const labelDropZoneArea = selectQuery(".index__file-label", this.shadowRoot);
@@ -1149,23 +1180,49 @@ class AudioPlayer extends HTMLElement {
         return __awaiter(this, void 0, void 0, function* () {
             const audioSourceElement = selectQuery("audio", this.shadowRoot);
             const mp3PlayerSection = selectQuery(".index__audio-player", this.shadowRoot);
-            audioSourceElement.addEventListener("loadeddata", () => { });
             switch (name) {
                 case "title": {
-                    console_functions_log({ name, oldValue, newValue });
                     const titleOfPlayer = selectQuery(".index__audio-player--name", this.shadowRoot);
                     titleOfPlayer.textContent = newValue;
                     //…
                     break;
                 }
                 case "is-playing": {
-                    console_functions_log("Play-pause button clicked!");
-                    const isPlaying = newValue === "true";
-                    if (isPlaying) {
+                    //@ts-ignore
+                    const button = selectQuery(".index__audio-player--button", mp3PlayerSection);
+                    const playSVG = selectQuery(".index__audio-player--play-icon", button);
+                    const pauseSVG = selectQuery(".index__audio-player--pause-icon", button);
+                    const restartSVG = selectQuery(".index__audio-player--restart-icon", button);
+                    const isNowPlaying = newValue === "true";
+                    const isNowNeedingToRestart = newValue === "false" && checkIfAudioEnded(audioSourceElement);
+                    if (isNowPlaying) {
+                        // Audio was paused and now needs to play.
+                        showOnlyPauseIcon();
                         playAudio(audioSourceElement);
                     }
+                    else if (isNowNeedingToRestart) {
+                        // Audio was playing, has ended, and is now paused.
+                        showOnlyRestartIcon();
+                    }
                     else {
+                        // Audio was playing and didn't end, now needs to pause.
+                        showOnlyPlayIcon();
                         pauseAudio(audioSourceElement);
+                    }
+                    function showOnlyPlayIcon() {
+                        addClass(pauseSVG, "hide");
+                        addClass(restartSVG, "hide");
+                        removeClass(playSVG, "hide");
+                    }
+                    function showOnlyPauseIcon() {
+                        addClass(playSVG, "hide");
+                        addClass(restartSVG, "hide");
+                        removeClass(pauseSVG, "hide");
+                    }
+                    function showOnlyRestartIcon() {
+                        addClass(playSVG, "hide");
+                        addClass(pauseSVG, "hide");
+                        removeClass(restartSVG, "hide");
                     }
                     //…
                     break;
@@ -1186,6 +1243,11 @@ class AudioPlayer extends HTMLElement {
                     let currentTime = Number(this.currentTime);
                     let progressPercentage = Math.ceil((currentTime / totalTimeInSeconds) * 100);
                     setStyleProperty("--progress", `${progressPercentage}%`, spanProgressBar);
+                    const hasEnded = checkIfAudioPaused(audioSourceElement) &&
+                        checkIfAudioEnded(audioSourceElement);
+                    if (hasEnded) {
+                        this.isPlaying = "false";
+                    }
                     //…
                     break;
                 }

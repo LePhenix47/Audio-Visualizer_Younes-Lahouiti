@@ -47,13 +47,22 @@ export function selectQueryAll(query: string, container?: any): any[] {
  * Function that returns an array containing all child nodes of an HTML element.
  *
  * @param {any} elementOfReference The parent HTML element whose children to select.
- * @returns {Element[]} An array containing all child nodes of the parent element or null if the parent element has no children.
+ * @returns {any[]} An array containing all child nodes of the parent element or null if the parent element has no children.
  */
-export function getChildren(elementOfReference: any | null): Element[] {
+export function getChildren(elementOfReference: any | null): any[] {
   if (!elementOfReference) {
     return [];
   }
   return Array.from(elementOfReference.children);
+}
+
+/**
+ * Returns the parent element of a given element.
+ * @param {HTMLElement} elementOfReference - The child element for which to find the parent.
+ * @returns {any} - The parent element of the child element, or null if the parent cannot be found.
+ */
+export function getParent(elementOfReference: HTMLElement): any {
+  return elementOfReference.parentElement;
 }
 
 /**
