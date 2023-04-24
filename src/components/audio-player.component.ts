@@ -24,7 +24,11 @@ import {
   setStyleProperty,
 } from "../utils/functions/dom.functions";
 import { transformAudioFileToBase64Text } from "../utils/functions/file.functions";
-import { splitString } from "../utils/functions/string.functions";
+import {
+  sliceString,
+  spliceArray,
+  splitString,
+} from "../utils/functions/string.functions";
 
 const audioPlayerTemplateElement = document.createElement("template");
 
@@ -174,11 +178,24 @@ const audioPlayerTemplateStyle = /*css*/ `
     z-index: 2
 }
 
-
 .index__canvas {
     z-index: 1
 }
 
+.index__audio-player--delete-button{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  color: var(--bg-primary);
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--color-primary);
+  aspect-ratio: 1/1;
+  outline: none;
+  border: inherit;
+}
 
 .index__canvas--round {
   position: absolute;
@@ -390,6 +407,11 @@ const audioPlayerTemplateHTMLContent = /*html */ `
         <input type="file" id="audio-file" class="index__input index__file-input hide" accept="audio/*" />
 
         <section class="index__audio-player hide">
+          <button class="index__audio-player--delete-button" type="button">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 384 512" height="15" width="15">
+  <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+</svg>
+          </button>
             <canvas class="index__canvas index__canvas--round"></canvas>
             <audio preload="auto" src=""></audio> 
             <h2 class="index__audio-player--name">Music title</h2>
@@ -404,7 +426,7 @@ const audioPlayerTemplateHTMLContent = /*html */ `
             </div>
             <div class="index__audio-player--controls">
                 <div class="index__audio-player--buttons">
-                    <button class="index__audio-player--button">
+                    <button class="index__audio-player--button" type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" class="index__audio-player--play-icon" fill="currentColor" viewBox="0 0 384 512" height="16" width="16">
                             <path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/>
                         </svg>
@@ -811,6 +833,16 @@ export class AudioPlayer extends HTMLElement {
         shadowRoot.volume = "0";
       }
     });
+
+    const deleteButton: HTMLButtonElement = selectQuery(
+      ".index__audio-player--delete-button",
+      this.shadowRoot
+    );
+    log({ deleteButton });
+    deleteButton.addEventListener("click", () => {
+      log("click");
+      hidePlayer(this.shadowRoot);
+    });
   }
 
   /**
@@ -1152,12 +1184,17 @@ async function showAudioPlayer(
   function showError() {
     log("Not an audio file, showing error message");
     removeClass(labelDropZoneArea, "active");
-    labelDropZoneArea.innerText = "File uploaded is not an audio";
+    labelDropZoneArea.textContent = "File uploaded is not an audio";
+  }
+  function removeActiveClassToDropzone() {
+    removeClass(labelDropZoneArea, "active");
   }
 
   if (isNotAnAudioFile) {
     showError();
     return;
+  } else {
+    removeActiveClassToDropzone();
   }
 
   const audioBase64String: string = await transformAudioFileToBase64Text(
@@ -1178,11 +1215,12 @@ async function showAudioPlayer(
 
   function setHostAttributes() {
     const { name }: File = fileUploaded;
+    const musicTitle = splitString(name, ".mp3")[0];
 
     const totalTime = Math.floor(getAudioTotalTime(audioSource));
 
     const attributesArray: { attribute: string; value: any }[] = [
-      { attribute: "title", value: name },
+      { attribute: "title", value: musicTitle },
       { attribute: "is-playing", value: false },
       { attribute: "current-time", value: 0 },
       { attribute: "total-time", value: totalTime },
@@ -1201,5 +1239,61 @@ async function showAudioPlayer(
 
       modifyAttribute(componentHost, attribute, value);
     }
+  }
+}
+/**
+ * Hides the audio player,resets its attributes and shows the label to upload audio files
+ *
+ * @param {ShadowRoot} componentHost - The ShadowRoot of the web component.
+ * @returns {void}
+ */
+function hidePlayer(componentHost: ShadowRoot): void {
+  const audioElement: HTMLAudioElement = selectQuery("audio", componentHost);
+  const labelDropZoneArea: HTMLLabelElement = selectQuery(
+    ".index__file-label",
+    componentHost
+  );
+
+  const mp3PlayerSection: HTMLElement = selectQuery(
+    ".index__audio-player",
+    componentHost
+  );
+
+  resetAudio();
+  resetPlayerAttributes();
+  showOnlyDropzone();
+  /**
+   * Resets the audio src attribute to an empty string.
+   *
+   * @returns {void}
+   */
+  function resetAudio(): void {
+    audioElement.src = "";
+  }
+  /**
+   * Resets the audio player's attributes to their initial value
+   *
+   * @returns {void}
+   */
+  function resetPlayerAttributes(): void {
+    // Array of attributes to reset.
+    const attributesArray: string[] = [
+      "title",
+      "is-playing",
+      "current-time",
+      "total-time",
+      "volume",
+      "is-muted",
+    ];
+
+    // Resets each attribute to an empty string.
+    for (const attribute of attributesArray) {
+      componentHost[attribute] = "";
+    }
+  }
+
+  function showOnlyDropzone() {
+    removeClass(labelDropZoneArea, "hide");
+    addClass(mp3PlayerSection, "hide");
   }
 }
