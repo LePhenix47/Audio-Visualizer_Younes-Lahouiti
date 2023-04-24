@@ -604,7 +604,7 @@ button {
     background-color: transparent;
     font-family: inherit;
     color: inherit;
-    outline: 2px solid white;
+    outline: 2px solid currentColor;
 }
 button:hover {
     cursor: pointer;
@@ -711,23 +711,15 @@ const audioPlayerTemplateStyle = /*css*/ `
     z-index: 1
 }
 
-.index__canvas--bars {
-    display: none;
-    height: 100%;
-    inset: 50%;
-    outline-offset: -3px;
-    position: absolute;
-    translate: -50% -50%;
-    width: 100%
-}
 
 .index__canvas--round {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: -1
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 125%;
+  height: 125%;
+  z-index: -1;
+  border-radius: inherit;
 }
 
 .index__svg {
