@@ -150,7 +150,7 @@ export function createAudioAnalyzer(
     amountOfAudioSamples,
     4,
     15
-  );
+  ).isWithinRange;
   if (amountIsOutOfRange) {
     analyzer.fftSize = 64;
     throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";

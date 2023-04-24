@@ -125,7 +125,7 @@ function createAudioAnalyzer(audioElement, amountOfAudioSamples) {
     analyzer.connect(audioContext.destination);
     // Set the number of audio sample frequencies with the FFT (Fast Fourier Transform) method
     //Btw here's an amazing explanation explaining what the FFT is useful for: https://www.youtube.com/watch?v=nmgFG7PUHfo
-    const amountIsOutOfRange = !isInRangePowerOfTwo(amountOfAudioSamples, 4, 15);
+    const amountIsOutOfRange = !isInRangePowerOfTwo(amountOfAudioSamples, 4, 15).isWithinRange;
     if (amountIsOutOfRange) {
         analyzer.fftSize = 64;
         throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";
