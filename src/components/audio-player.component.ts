@@ -696,54 +696,10 @@ export class AudioPlayer extends HTMLElement {
    * @param {InputEvent} event - The input event.
    */
   setVolume(event: InputEvent) {
+    const shadowRoot: ShadowRoot = getComponentHost(event.currentTarget);
     // @ts-ignore
     const valueOfInput: number = Number(event.target.value);
-    const shadowRoot: ShadowRoot = getComponentHost(event.currentTarget);
-
-    const hasHighVolume: boolean = valueOfInput >= 50;
-    const hasLowVolume: boolean = valueOfInput < 50 && valueOfInput !== 0;
-    const hasNoVolume: boolean = valueOfInput === 0;
-
-    const mutedIcon = selectQuery(
-      ".index__audio-player--muted-volume-icon",
-      shadowRoot
-    );
-    const lowVolumeIcon = selectQuery(
-      ".index__audio-player--low-volume-icon",
-      shadowRoot
-    );
-    const highVolumeIcon = selectQuery(
-      ".index__audio-player--high-volume-icon",
-      shadowRoot
-    );
-
-    if (hasHighVolume) {
-      showHighVolumeIcon();
-    } else if (hasLowVolume) {
-      showLowVolumeIcon();
-    } else if (hasNoVolume) {
-      showMutedIcon();
-    }
-
     modifyAttribute(shadowRoot, "volume", valueOfInput);
-
-    function showMutedIcon() {
-      removeClass(mutedIcon, "hide");
-      addClass(lowVolumeIcon, "hide");
-      addClass(highVolumeIcon, "hide");
-    }
-
-    function showLowVolumeIcon() {
-      removeClass(lowVolumeIcon, "hide");
-      addClass(mutedIcon, "hide");
-      addClass(highVolumeIcon, "hide");
-    }
-
-    function showHighVolumeIcon() {
-      removeClass(highVolumeIcon, "hide");
-      addClass(lowVolumeIcon, "hide");
-      addClass(mutedIcon, "hide");
-    }
   }
 
   /**
@@ -786,6 +742,8 @@ export class AudioPlayer extends HTMLElement {
     setTimestampAudio(audioSource, audioNewCurrentTime);
   }
 
+  muteAudioVolume(event: PointerEvent) {}
+
   //Web component methods
   /**
    * Invoked each time the custom element is appended into a document-connected element.
@@ -809,9 +767,6 @@ export class AudioPlayer extends HTMLElement {
     );
     inputFile.addEventListener("change", this.uploadAudioInput);
 
-    /**
-     * Need to remove the event listeners on the disconnectedCallback() ↓
-     */
     const playPauseAudioButton: HTMLButtonElement = selectQuery(
       ".index__audio-player--button",
       this.shadowRoot
@@ -831,7 +786,7 @@ export class AudioPlayer extends HTMLElement {
     );
     sliderInput.addEventListener("input", this.setVolume);
 
-    const placeholderProgressBar = selectQuery(
+    const placeholderProgressBar: HTMLDivElement = selectQuery(
       ".index__audio-player--progress-bar",
       this.shadowRoot
     );
@@ -840,6 +795,30 @@ export class AudioPlayer extends HTMLElement {
     /**
      * Need to remove the event listeners on the disconnectedCallback() ↑
      * */
+    const muteButton: HTMLButtonElement = selectQuery(
+      ".index__audio-player--mute",
+      this.shadowRoot
+    );
+    muteButton.addEventListener("click", (event: PointerEvent) => {
+      const shadowRoot: ShadowRoot = getComponentHost(event.currentTarget);
+      //@ts-ignore
+      const isAlreadyMuted = shadowRoot.isMuted === "true";
+      if (isAlreadyMuted) {
+        //@ts-ignore
+        sliderInput.value = 50;
+        //@ts-ignore
+        shadowRoot.isMuted = "false";
+        //@ts-ignore
+        shadowRoot.volume = "50";
+      } else {
+        //@ts-ignore
+        sliderInput.value = 0;
+        //@ts-ignore
+        shadowRoot.isMuted = "true";
+        //@ts-ignore
+        shadowRoot.volume = "0";
+      }
+    });
   }
 
   /**
@@ -882,7 +861,7 @@ export class AudioPlayer extends HTMLElement {
     );
     sliderInput.removeEventListener("input", this.setVolume);
 
-    const placeholderProgressBar = selectQuery(
+    const placeholderProgressBar: HTMLDivElement = selectQuery(
       ".index__audio-player--progress-bar",
       this.shadowRoot
     );
@@ -891,6 +870,17 @@ export class AudioPlayer extends HTMLElement {
       "click",
       this.setNavigationDragger
     );
+
+    const muteButton: HTMLButtonElement = selectQuery(
+      ".index__audio-player--mute",
+      this.shadowRoot
+    );
+    muteButton.removeEventListener("click", (event: PointerEvent) => {
+      //@ts-ignore
+      sliderInput.value = 0;
+      const shadowRoot: ShadowRoot = getComponentHost(event.currentTarget);
+      modifyAttribute(shadowRoot, "volume", 0);
+    });
   }
 
   /**
@@ -929,7 +919,6 @@ export class AudioPlayer extends HTMLElement {
         break;
       }
       case "is-playing": {
-        //@ts-ignore
         const button: HTMLButtonElement = selectQuery(
           ".index__audio-player--button",
           mp3PlayerSection
@@ -1057,6 +1046,49 @@ export class AudioPlayer extends HTMLElement {
       case "volume": {
         const fractionedValue = Number(newValue) / 100;
         setAudioVolume(audioSourceElement, fractionedValue);
+        const mutedIcon = selectQuery(
+          ".index__audio-player--muted-volume-icon",
+          this.shadowRoot
+        );
+        const lowVolumeIcon = selectQuery(
+          ".index__audio-player--low-volume-icon",
+          this.shadowRoot
+        );
+        const highVolumeIcon = selectQuery(
+          ".index__audio-player--high-volume-icon",
+          this.shadowRoot
+        );
+
+        const hasHighVolume: boolean = Number(newValue) >= 50;
+        const hasLowVolume: boolean =
+          Number(newValue) < 50 && Number(newValue) !== 0;
+        const hasNoVolume: boolean = Number(newValue) === 0;
+
+        if (hasHighVolume) {
+          showHighVolumeIcon();
+        } else if (hasLowVolume) {
+          showLowVolumeIcon();
+        } else if (hasNoVolume) {
+          showMutedIcon();
+        }
+
+        function showMutedIcon() {
+          removeClass(mutedIcon, "hide");
+          addClass(lowVolumeIcon, "hide");
+          addClass(highVolumeIcon, "hide");
+        }
+
+        function showLowVolumeIcon() {
+          removeClass(lowVolumeIcon, "hide");
+          addClass(mutedIcon, "hide");
+          addClass(highVolumeIcon, "hide");
+        }
+
+        function showHighVolumeIcon() {
+          removeClass(highVolumeIcon, "hide");
+          addClass(lowVolumeIcon, "hide");
+          addClass(mutedIcon, "hide");
+        }
         //…
         break;
       }
