@@ -12,6 +12,7 @@ import { splitString } from "./utils/functions/string.functions";
 import "./components/audio-player.component";
 import { createDataAndAudioAnalyzer } from "./utils/functions/audio.functions";
 import { isInRangePowerOfTwo } from "./utils/functions/number.function";
+import { createCanvasGradient } from "./utils/functions/canvas.functions";
 
 const barsCanvas: HTMLCanvasElement = selectQuery(".index__canvas--bars");
 const barsCanvasContext: CanvasRenderingContext2D = barsCanvas.getContext("2d");
@@ -24,13 +25,15 @@ const audioContext: AudioContext = new AudioContext();
 
 const main: HTMLElement = selectQuery("main");
 // When the window is resized, update the canvas dimensions and clear the canvas
-const { height, width } = main.getBoundingClientRect();
-barsCanvas.width = width;
-barsCanvas.height = height;
+const mainDimensionsAndPosition: DOMRect = main.getBoundingClientRect();
+barsCanvas.width = mainDimensionsAndPosition.width;
+barsCanvas.height = mainDimensionsAndPosition.height;
+
 window.addEventListener("resize", () => {
-  const { height, width } = main.getBoundingClientRect();
-  barsCanvas.width = width;
-  barsCanvas.height = height;
+  const mainDimensionsAndPositionResized: DOMRect =
+    main.getBoundingClientRect();
+  barsCanvas.width = mainDimensionsAndPositionResized.width;
+  barsCanvas.height = mainDimensionsAndPositionResized.height;
 });
 
 // Create an audio node from the <audio> element
@@ -44,37 +47,74 @@ analyzer.connect(audioContext.destination);
 
 // Set the number of audio sample frequencies with the FFT (Fast Fourier Transform) method
 //Btw here's an amazing explanation explaining what the FFT is useful for: https://www.youtube.com/watch?v=nmgFG7PUHfo
-// const amountIsOutOfRange: boolean = !isInRangePowerOfTwo(16, 4, 15)
-//   .isWithinRange;
-// if (amountIsOutOfRange) {
-//   analyzer.fftSize = 64;
-//   throw "FFT size is either not a power of 2 or out of the range [2⁴ , 2¹⁵]";
-// }
 analyzer.fftSize = 128;
 
-function animate() {
-  // Create an unsigned 8-bit integer array with the frequency data from the analyzer
+/**
+ * Animates the bars in the canvas by clearing the canvas, drawing the bars and then requesting another animation frame
+ *
+ * @returns {void}
+ */
+function animate(): void {
+  //We clear the old plaint
+  barsCanvasContext.clearRect(0, 0, barsCanvas.width, barsCanvas.height);
+  //We draw the bars
+  drawBars();
+  //We create a loop to update the canvas every frame (1/24th of a second)
+  requestAnimationFrame(animate);
+}
+animate();
+
+/**
+ * Draws the bars in the canvas based on the frequency data from the analyzer
+ *
+ * @returns {void}
+ */
+function drawBars(): void {
+  // Create an unsigned (number >= 0) short 8-bit [0-255] integer array with the frequency data from the analyzer
   const bufferLength: number = analyzer.frequencyBinCount;
   const frequencyDataArray: Uint8Array = new Uint8Array(bufferLength);
+
+  // Calculate the width of each bar based on the canvas width and the length of the frequency data array
   const singleBarWidth = (barsCanvas.width / frequencyDataArray.length) * 2;
-  let xValue = 0;
-  let singleBarHeight = null;
-  barsCanvasContext.clearRect(0, 0, barsCanvas.width, barsCanvas.height);
+
+  // Set the initial x value for the first bar to 0
+  let axisXBarValue: number = 0;
+
+  // Declare a variable to store the height of each bar
+  let singleBarHeight: number = null;
+
+  // Get the byte frequency data from the analyzer and store it in the frequency data array
   analyzer.getByteFrequencyData(frequencyDataArray);
+
+  // Create a linear gradient for the bars
+  const arrayOfHexColors: string[] = ["#333", "#c4c4c4"];
+  const gradient2: CanvasGradient = createCanvasGradient(
+    barsCanvasContext,
+    0,
+    0,
+    0,
+    barsCanvas.height,
+    arrayOfHexColors
+  );
+
+  // Loop through each element in the frequency data array
   for (let i = 0; i < bufferLength; i++) {
+    // Calculate the height of the bar based on the frequency data at this index
     singleBarHeight = frequencyDataArray[i] * 2;
-    const red = i * 4 + 100;
-    const green = i * singleBarHeight + 50;
-    const blue = i * singleBarHeight + 50;
-    barsCanvasContext.fillStyle = `rgb(${red},${green},${blue})`;
+
+    // Set the fill style of the canvas context to the gradient
+    barsCanvasContext.fillStyle = gradient2;
+
+    // Draw a rectangle for the bar at the current x value,
+    // with a height based on the frequency data and a width based on the single bar width
     barsCanvasContext.fillRect(
-      xValue,
+      axisXBarValue,
       barsCanvas.height - singleBarHeight,
       singleBarWidth,
       singleBarHeight
     );
-    xValue += singleBarWidth;
+
+    // Increment the x value by the width of a single bar to move to the next bar
+    axisXBarValue += singleBarWidth;
   }
-  requestAnimationFrame(animate);
 }
-animate();
