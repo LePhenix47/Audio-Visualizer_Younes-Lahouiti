@@ -4,6 +4,12 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
 (() => {
 
+;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
+/**
+ * The console methods are exported as separate methods through destructuring
+ */
+const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
+
 ;// CONCATENATED MODULE: ./src/utils/functions/dom.functions.ts
 /**
  * A simplified version of `document.querySelector()`
@@ -348,12 +354,6 @@ function createDataAndAudioAnalyzer(audioElement, amountOfAudioSamples) {
         frequencyDataArray,
     };
 }
-
-;// CONCATENATED MODULE: ./src/utils/functions/console.functions.ts
-/**
- * The console methods are exported as separate methods through destructuring
- */
-const { log: console_functions_log, error, table, time, timeEnd, timeStamp, timeLog, assert, clear, count, countReset, group, groupCollapsed, groupEnd, trace, profile, profileEnd, warn, debug, info, dir, dirxml, } = console;
 
 ;// CONCATENATED MODULE: ./src/utils/functions/file.functions.ts
 /**
@@ -1654,6 +1654,17 @@ function createCanvasGradient(canvasContext, startX, startY, endX, endY, arrayOf
 }
 
 ;// CONCATENATED MODULE: ./src/index.ts
+var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+//Utils
+
 
 //Components
 
@@ -1711,12 +1722,13 @@ function drawBars() {
     let singleBarHeight = null;
     // Get the byte frequency data from the analyzer and store it in the frequency data array
     analyzer.getByteFrequencyData(frequencyDataArray);
-    // Create a linear gradient for the bars
+    // Create a linear gradient for the bars using an array of hex colors
     const arrayOfHexColors = ["#333", "#c4c4c4"];
     const canvasGradient = createCanvasGradient(barsCanvasContext, 0, 0, 0, barsCanvas.height, arrayOfHexColors);
-    // Loop through each element in the frequency data array
+    // Loop through each element in the frequency data array to draw the bars
     for (let i = 0; i < bufferLength; i++) {
-        // Calculate the height of the bar based on the frequency data at this index
+        // Calculate the height of the bar based on the frequency data at this index,
+        // which is scaled by a factor of 2.5 to make the bars taller
         singleBarHeight = frequencyDataArray[i] * 2.5;
         // Set the fill style of the canvas context to the gradient
         barsCanvasContext.fillStyle = canvasGradient;
@@ -1726,6 +1738,27 @@ function drawBars() {
         // Increment the x value by the width of a single bar to move to the next bar
         axisXBarValue += singleBarWidth;
     }
+}
+const authorizeButton = selectQuery(".index__authorize-button");
+// One-liner to resume playback when user interacted with the page.
+authorizeButton.addEventListener("click", resumeAudioContext);
+/**
+ * Resumes the audio context when the user interacts with the page
+ * @async
+ *
+ * @return {Promise<void>} Nothing
+ */
+function resumeAudioContext() {
+    return src_awaiter(this, void 0, void 0, function* () {
+        try {
+            //We'll wait for the audio context to resume
+            yield audioContext.resume();
+            console_functions_log("sucess!");
+        }
+        catch (resumeError) {
+            error("An unexpected error has occured: ", resumeError);
+        }
+    });
 }
 
 })();

@@ -67,36 +67,7 @@
 
 
     &__audio-player {
-        display: flex;
-        justify-content: center;
 
-        flex-direction: column;
-        gap: 15px;
-
-        background-image: linear-gradient(90deg,
-                #dedad6, #dedad633,
-                #212529, #21252933);
-        background-position: 0%;
-        background-size: 200%;
-
-        transition:
-            background-position 350ms ease-in-out;
-
-        backdrop-filter: blur(15px);
-
-        position: relative; //relative to the round <canvas> element
-
-        padding: 20px;
-        border-radius: 10px;
-
-        width: 50%;
-        min-height: 250px;
-
-        z-index: 2;
-
-        @include mobile-only {
-            width: 80%;
-        }
 
         &--component {
             width: 50%;
@@ -108,122 +79,28 @@
             }
         }
 
-        &--name {
-            padding-bottom: 20px;
+    }
 
-            @include single-ellipsis-effect;
+    &__authorize-button {
+        margin-top: 25px;
+
+        color: var(--bg-primary);
+        background-color: var(--color-primary);
+
+        padding: 5px 10px;
+        border-radius: 100vmax;
+
+        min-width: 85px;
+
+        transition: filter 150ms ease-in-out;
+
+        &:hover {
+            filter: contrast(75%);
         }
 
-        &--progress {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        &:active {
+            outline: 2px solid var(--bg-primary);
+            outline-offset: 5px;
         }
-
-        &--progress-bar {
-            display: flex;
-
-            width: 100%;
-            min-height: 15px;
-
-            background-color: grey;
-
-            border-radius: 100vmax;
-        }
-
-        &--current-progress {
-            --progress: 0%;
-            display: inline-block !important;
-
-            min-height: 15px;
-
-            width: var(--progress);
-            max-width: 100%;
-
-            background-color: white;
-
-            border: 2px solid black;
-            border-radius: inherit;
-
-            transition: width 350ms ease-out;
-        }
-
-        &--timestamp {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-        }
-
-        &--current-time {}
-
-        &--total-time {}
-
-        &--source {}
-
-        &--controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            gap: 15px;
-
-            margin-top: 25px;
-
-            @include mobile-only {
-                flex-direction: column;
-
-                gap: 25px;
-                margin: 25px;
-            }
-        }
-
-        &--buttons {
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-            gap: 15px;
-        }
-
-        &--button {}
-
-        &--volume {
-            @include center-flex(15px);
-        }
-
-        &--mute {}
-
-        &--slider {
-            appearance: none;
-            background-color: var(--bg-primary);
-            border-radius: 25px;
-            height: 10px;
-            overflow: hidden;
-
-            width: 210px;
-
-
-
-            &::-webkit-slider-runnable-track {
-                @include range-input-track-style;
-            }
-
-            &::-moz-range-track {
-                @include range-input-track-style;
-            }
-
-
-
-            &::-webkit-slider-thumb {
-                @include range-input-thumb-style;
-
-            }
-
-
-            &::-moz-range-thumb {
-                @include range-input-thumb-style;
-            }
-        }
-
     }
 }

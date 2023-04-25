@@ -1,5 +1,5 @@
 //Utils
-import { log } from "./utils/functions/console.functions";
+import { log, error } from "./utils/functions/console.functions";
 import {
   selectQuery,
   selectQueryAll,
@@ -96,7 +96,7 @@ function drawBars(): void {
   // Get the byte frequency data from the analyzer and store it in the frequency data array
   analyzer.getByteFrequencyData(frequencyDataArray);
 
-  // Create a linear gradient for the bars
+  // Create a linear gradient for the bars using an array of hex colors
   const arrayOfHexColors: string[] = ["#333", "#c4c4c4"];
   const canvasGradient: CanvasGradient = createCanvasGradient(
     barsCanvasContext,
@@ -107,9 +107,10 @@ function drawBars(): void {
     arrayOfHexColors
   );
 
-  // Loop through each element in the frequency data array
+  // Loop through each element in the frequency data array to draw the bars
   for (let i = 0; i < bufferLength; i++) {
-    // Calculate the height of the bar based on the frequency data at this index
+    // Calculate the height of the bar based on the frequency data at this index,
+    // which is scaled by a factor of 2.5 to make the bars taller
     singleBarHeight = frequencyDataArray[i] * 2.5;
 
     // Set the fill style of the canvas context to the gradient
@@ -126,5 +127,26 @@ function drawBars(): void {
 
     // Increment the x value by the width of a single bar to move to the next bar
     axisXBarValue += singleBarWidth;
+  }
+}
+
+const authorizeButton = selectQuery(".index__authorize-button");
+
+// One-liner to resume playback when user interacted with the page.
+authorizeButton.addEventListener("click", resumeAudioContext);
+
+/**
+ * Resumes the audio context when the user interacts with the page
+ * @async
+ *
+ * @return {Promise<void>} Nothing
+ */
+async function resumeAudioContext(): Promise<void> {
+  try {
+    //We'll wait for the audio context to resume
+    await audioContext.resume();
+    log("sucess!");
+  } catch (resumeError) {
+    error("An unexpected error has occured: ", resumeError);
   }
 }
