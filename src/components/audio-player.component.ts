@@ -192,6 +192,8 @@ const audioPlayerTemplateStyle: string = /*css*/ `
   aspect-ratio: 1/1;
   outline: none;
   border: inherit;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .index__svg {
@@ -456,6 +458,7 @@ audioPlayerTemplateElement.innerHTML = /* html */ `
  * A custom web component for audio player.
  *
  * @extends {HTMLElement}
+ * @class
  */
 export class AudioPlayer extends HTMLElement {
   /**

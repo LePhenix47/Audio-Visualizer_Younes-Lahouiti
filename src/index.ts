@@ -16,6 +16,7 @@ import {
   createCanvasGradient,
   setCanvasDimensions,
 } from "./utils/functions/canvas.functions";
+import { Timeout } from "./utils/classes/timeout.class";
 
 const barsCanvas: HTMLCanvasElement = selectQuery(".index__canvas--bars");
 const barsCanvasContext: CanvasRenderingContext2D = barsCanvas.getContext("2d");
@@ -130,7 +131,9 @@ function drawBars(): void {
   }
 }
 
-const authorizeButton = selectQuery(".index__authorize-button");
+const authorizeButton: HTMLButtonElement = selectQuery(
+  ".index__authorize-button"
+);
 
 // One-liner to resume playback when user interacted with the page.
 authorizeButton.addEventListener("click", resumeAudioContext);
@@ -142,11 +145,17 @@ authorizeButton.addEventListener("click", resumeAudioContext);
  * @return {Promise<void>} Nothing
  */
 async function resumeAudioContext(): Promise<void> {
+  const button: HTMLButtonElement = this;
+  const timeoutCreator: Timeout = new Timeout();
+
+  function hideElement() {}
   try {
     //We'll wait for the audio context to resume
     await audioContext.resume();
-    log("sucess!");
+    button.textContent = "Success!";
+    hideElement();
   } catch (resumeError) {
     error("An unexpected error has occured: ", resumeError);
+    button.textContent = `Error: ${resumeError}`;
   }
 }

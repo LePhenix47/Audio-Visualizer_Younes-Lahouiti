@@ -762,6 +762,8 @@ const audioPlayerTemplateStyle = /*css*/ `
   aspect-ratio: 1/1;
   outline: none;
   border: inherit;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .index__svg {
@@ -1023,6 +1025,7 @@ audioPlayerTemplateElement.innerHTML = /* html */ `
  * A custom web component for audio player.
  *
  * @extends {HTMLElement}
+ * @class
  */
 class AudioPlayer extends HTMLElement {
     /**
@@ -1653,6 +1656,70 @@ function createCanvasGradient(canvasContext, startX, startY, endX, endY, arrayOf
     return canvasGradient;
 }
 
+;// CONCATENATED MODULE: ./src/utils/classes/timeout.class.ts
+/**
+ * Utility class that sets and clears timeouts
+ *
+ * @class
+ */
+class Timeout {
+    constructor() { }
+    /**
+     * Method that creates an timeout
+     *
+     * @param {(...args: any) => any | void} callback Callback function that will be called after the timeout runs out
+     * @param milliseconds Duration of the timeout in milliseconds before executing the callback function
+     * @returns A number as an ID for the timeout
+     *
+     * @example
+     * let fct = () => {
+     *   console.log("Hello World");
+     * };
+     *
+     * const timeout = new Timeout()
+     *
+     * let timeoutTrigger = new Timeout().add(fct, 2_500);
+     *
+     */
+    static set(callback, milliseconds) {
+        this.id = setTimeout(() => {
+            callback();
+        }, milliseconds);
+        this.arrayOfIds.push(this.id);
+        return this.id;
+    }
+    /**
+     * Method that clears a timeout
+     *
+     * @param {number} id ID of the timeout to clear (stored inside the trigger of the timeout)
+     *
+     * @example
+     *
+     * function fct() {
+     *   console.log("Hello world!");
+     * }
+     *
+     * const timeout = new Timeout()
+     * let timeoutTrigger = timeout.add(fct, 2_500);
+     *
+     * // ...
+     *
+     * timeout.clear(timeoutTrigger);
+     *
+     */
+    static clear(id) {
+        const actualId = this.arrayOfIds.filter((idNumber) => {
+            return idNumber === id;
+        })[0];
+        clearTimeout(actualId);
+        this.arrayOfIds = this.arrayOfIds.filter((idNumber) => {
+            return idNumber !== actualId;
+        });
+    }
+}
+Timeout.arrayOfIds = [];
+
+
 ;// CONCATENATED MODULE: ./src/index.ts
 var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1667,6 +1734,7 @@ var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argu
 
 
 //Components
+
 
 
 const barsCanvas = selectQuery(".index__canvas--bars");
@@ -1750,13 +1818,18 @@ authorizeButton.addEventListener("click", resumeAudioContext);
  */
 function resumeAudioContext() {
     return src_awaiter(this, void 0, void 0, function* () {
+        const button = this;
+        const timeoutCreator = new Timeout();
+        function hideElement() { }
         try {
             //We'll wait for the audio context to resume
             yield audioContext.resume();
-            console_functions_log("sucess!");
+            button.textContent = "Success!";
+            hideElement();
         }
         catch (resumeError) {
             error("An unexpected error has occured: ", resumeError);
+            button.textContent = `Error: ${resumeError}`;
         }
     });
 }
