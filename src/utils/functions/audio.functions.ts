@@ -27,6 +27,15 @@ export function setAudioVolume(audio: HTMLAudioElement, volume: number): void {
 }
 
 /**
+ * Mutes the volume of an audio element
+ * @param {HTMLAudioElement} audio - The audio element to set the volume for
+ *
+ */
+export function muteVolume(audio: HTMLAudioElement): void {
+  audio.muted = true;
+}
+
+/**
  * Sets to a specific timestamp in an audio element
  * @param {HTMLAudioElement} audio - The audio element to seek
  * @param {number} time - The time to seek to (in seconds)

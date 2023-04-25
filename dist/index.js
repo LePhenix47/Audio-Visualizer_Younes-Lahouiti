@@ -230,6 +230,14 @@ function setAudioVolume(audio, volume) {
     audio.volume = volume;
 }
 /**
+ * Mutes the volume of an audio element
+ * @param {HTMLAudioElement} audio - The audio element to set the volume for
+ *
+ */
+function muteVolume(audio) {
+    audio.muted = true;
+}
+/**
  * Sets to a specific timestamp in an audio element
  * @param {HTMLAudioElement} audio - The audio element to seek
  * @param {number} time - The time to seek to (in seconds)
