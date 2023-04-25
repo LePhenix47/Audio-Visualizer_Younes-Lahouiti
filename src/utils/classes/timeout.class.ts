@@ -4,8 +4,8 @@
  * @class
  */
 export class Timeout {
-  private static id: NodeJS.Timeout;
-  private static arrayOfIds: NodeJS.Timeout[] = [];
+  private id: NodeJS.Timeout;
+  private arrayOfIds: NodeJS.Timeout[] = [];
 
   constructor() {}
 
@@ -26,7 +26,7 @@ export class Timeout {
    * let timeoutTrigger = new Timeout().add(fct, 2_500);
    *
    */
-  public static set(
+  public set(
     callback: (...args: any) => any | void,
     milliseconds: number
   ): NodeJS.Timeout {
@@ -58,7 +58,7 @@ export class Timeout {
    * timeout.clear(timeoutTrigger);
    *
    */
-  public static clear(id: NodeJS.Timeout): void {
+  public clear(id: NodeJS.Timeout): void {
     const actualId: NodeJS.Timeout = this.arrayOfIds.filter(
       (idNumber: NodeJS.Timeout) => {
         return idNumber === id;

@@ -148,7 +148,15 @@ async function resumeAudioContext(): Promise<void> {
   const button: HTMLButtonElement = this;
   const timeoutCreator: Timeout = new Timeout();
 
-  function hideElement() {}
+  function hideElement() {
+    //Will fade out with a delay of 2 seconds
+    addClass(button, "fade-out");
+    const removeElementDisplay = timeoutCreator.set(() => {
+      removeClass(button, "fade-out");
+      addClass(button, "hide");
+      //We remove the fade-out function
+    }, 1_400);
+  }
   try {
     //We'll wait for the audio context to resume
     await audioContext.resume();

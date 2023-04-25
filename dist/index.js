@@ -1663,7 +1663,9 @@ function createCanvasGradient(canvasContext, startX, startY, endX, endY, arrayOf
  * @class
  */
 class Timeout {
-    constructor() { }
+    constructor() {
+        this.arrayOfIds = [];
+    }
     /**
      * Method that creates an timeout
      *
@@ -1681,7 +1683,7 @@ class Timeout {
      * let timeoutTrigger = new Timeout().add(fct, 2_500);
      *
      */
-    static set(callback, milliseconds) {
+    set(callback, milliseconds) {
         this.id = setTimeout(() => {
             callback();
         }, milliseconds);
@@ -1707,7 +1709,7 @@ class Timeout {
      * timeout.clear(timeoutTrigger);
      *
      */
-    static clear(id) {
+    clear(id) {
         const actualId = this.arrayOfIds.filter((idNumber) => {
             return idNumber === id;
         })[0];
@@ -1717,8 +1719,6 @@ class Timeout {
         });
     }
 }
-Timeout.arrayOfIds = [];
-
 
 ;// CONCATENATED MODULE: ./src/index.ts
 var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -1820,7 +1820,15 @@ function resumeAudioContext() {
     return src_awaiter(this, void 0, void 0, function* () {
         const button = this;
         const timeoutCreator = new Timeout();
-        function hideElement() { }
+        function hideElement() {
+            //Will fade out with a delay of 2 seconds
+            addClass(button, "fade-out");
+            const removeElementDisplay = timeoutCreator.set(() => {
+                removeClass(button, "fade-out");
+                addClass(button, "hide");
+                //We remove the fade-out function
+            }, 1400);
+        }
         try {
             //We'll wait for the audio context to resume
             yield audioContext.resume();
