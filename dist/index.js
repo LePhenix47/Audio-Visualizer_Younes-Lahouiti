@@ -1235,7 +1235,6 @@ class AudioPlayer extends HTMLElement {
      */
     setNavigationDragger(event) {
         const mp3Container = getAncestor(event.currentTarget, "section");
-        const shadowRoot = getComponentHost(mp3Container);
         const audioSource = selectQuery("audio", mp3Container);
         // Get the position and width of the placeholder progress bar element
         const { left, width } = this.getBoundingClientRect();
@@ -1617,6 +1616,7 @@ function hidePlayer(componentHost) {
  * @param {HTMLCanvasElement} canvas - The canvas element to set the dimensions for
  * @param {number} width - The desired width for the canvas element
  * @param {number} height - The desired height for the canvas element
+ *
  * @returns {void}
  */
 function setCanvasDimensions(canvas, width, height) {

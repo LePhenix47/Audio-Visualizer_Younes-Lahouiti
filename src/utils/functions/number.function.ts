@@ -12,6 +12,7 @@ export function isInRangePowerOfTwo(
   maxExponent: number
 ): { isPowerOfTwo: boolean; isWithinRange: boolean } {
   // The logarithm base 2 of the input number
+  //Ex log(16) = 4
   const numerOnLogBaseTwo: number = Math.log2(number);
 
   // Indicates whether the input number is not a power of two
@@ -21,15 +22,9 @@ export function isInRangePowerOfTwo(
     return { isPowerOfTwo: false, isWithinRange: false };
   }
 
-  // The minimum possible value for the power of two within the specified range
-  const minPowerOfTwo: number = 2 ** minExponent;
-
-  // The maximum possible value for the power of two within the specified range
-  const maxPowerOfTwo: number = 2 ** maxExponent;
-
   // Indicates whether the input number falls outside the specified range
   const isNotBetweenRange: boolean =
-    number < minPowerOfTwo || number > maxPowerOfTwo;
+    numerOnLogBaseTwo < minExponent || numerOnLogBaseTwo > maxExponent;
 
   if (isNotBetweenRange) {
     return { isPowerOfTwo: true, isWithinRange: false };

@@ -705,8 +705,6 @@ export class AudioPlayer extends HTMLElement {
       "section"
     );
 
-    const shadowRoot = getComponentHost(mp3Container);
-
     const audioSource: HTMLAudioElement = selectQuery("audio", mp3Container);
     // Get the position and width of the placeholder progress bar element
     const { left, width }: DOMRect = this.getBoundingClientRect();

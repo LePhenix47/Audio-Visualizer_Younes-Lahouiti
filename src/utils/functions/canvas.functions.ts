@@ -4,6 +4,7 @@
  * @param {HTMLCanvasElement} canvas - The canvas element to set the dimensions for
  * @param {number} width - The desired width for the canvas element
  * @param {number} height - The desired height for the canvas element
+ *
  * @returns {void}
  */
 export function setCanvasDimensions(
