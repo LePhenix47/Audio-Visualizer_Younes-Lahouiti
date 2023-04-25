@@ -1,7 +1,7 @@
 @use "../utils/" as *;
 
 .index {
-    @include center-flex-column;
+    @include center-flex-column(25px);
 
     background-color: transparent;
 
@@ -9,13 +9,40 @@
 
     position: relative;
 
+    z-index: 2;
+
+    @include mobile-landscape-only {
+        min-height: 125dvh;
+        gap: 35px;
+    }
+
     &__svg {
         aspect-ratio: 1/1;
         height: 25%;
         color: var(--bg-tertiary);
     }
 
-    z-index: 2;
+    &__authorize-button {
+        color: var(--bg-primary);
+        background-color: var(--color-primary);
+
+        padding: 5px 10px;
+        border-radius: 100vmax;
+
+        min-width: 85px;
+
+        transition: filter 150ms ease-in-out;
+
+        &:hover {
+            filter: contrast(75%);
+        }
+
+        &:active {
+            outline: 2px solid var(--bg-primary);
+            outline-offset: 5px;
+        }
+    }
+
 
     &__canvas {
         z-index: 1;
@@ -81,26 +108,5 @@
 
     }
 
-    &__authorize-button {
-        margin-top: 25px;
 
-        color: var(--bg-primary);
-        background-color: var(--color-primary);
-
-        padding: 5px 10px;
-        border-radius: 100vmax;
-
-        min-width: 85px;
-
-        transition: filter 150ms ease-in-out;
-
-        &:hover {
-            filter: contrast(75%);
-        }
-
-        &:active {
-            outline: 2px solid var(--bg-primary);
-            outline-offset: 5px;
-        }
-    }
 }

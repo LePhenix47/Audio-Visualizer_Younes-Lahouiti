@@ -1663,9 +1663,7 @@ function createCanvasGradient(canvasContext, startX, startY, endX, endY, arrayOf
  * @class
  */
 class Timeout {
-    constructor() {
-        this.arrayOfIds = [];
-    }
+    constructor() { }
     /**
      * Method that creates an timeout
      *
@@ -1683,7 +1681,7 @@ class Timeout {
      * let timeoutTrigger = new Timeout().add(fct, 2_500);
      *
      */
-    set(callback, milliseconds) {
+    static set(callback, milliseconds) {
         this.id = setTimeout(() => {
             callback();
         }, milliseconds);
@@ -1709,7 +1707,7 @@ class Timeout {
      * timeout.clear(timeoutTrigger);
      *
      */
-    clear(id) {
+    static clear(id) {
         const actualId = this.arrayOfIds.filter((idNumber) => {
             return idNumber === id;
         })[0];
@@ -1719,6 +1717,8 @@ class Timeout {
         });
     }
 }
+Timeout.arrayOfIds = [];
+
 
 ;// CONCATENATED MODULE: ./src/index.ts
 var src_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -1797,7 +1797,7 @@ function drawBars() {
     for (let i = 0; i < bufferLength; i++) {
         // Calculate the height of the bar based on the frequency data at this index,
         // which is scaled by a factor of 2.5 to make the bars taller
-        singleBarHeight = frequencyDataArray[i] * 2.5;
+        singleBarHeight = frequencyDataArray[i] * 2;
         // Set the fill style of the canvas context to the gradient
         barsCanvasContext.fillStyle = canvasGradient;
         // Draw a rectangle for the bar at the current x value,
@@ -1823,7 +1823,7 @@ function resumeAudioContext() {
         function hideElement() {
             //Will fade out with a delay of 2 seconds
             addClass(button, "fade-out");
-            const removeElementDisplay = timeoutCreator.set(() => {
+            Timeout.set(() => {
                 removeClass(button, "fade-out");
                 addClass(button, "hide");
                 //We remove the fade-out function

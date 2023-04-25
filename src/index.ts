@@ -112,7 +112,7 @@ function drawBars(): void {
   for (let i = 0; i < bufferLength; i++) {
     // Calculate the height of the bar based on the frequency data at this index,
     // which is scaled by a factor of 2.5 to make the bars taller
-    singleBarHeight = frequencyDataArray[i] * 2.5;
+    singleBarHeight = frequencyDataArray[i] * 2;
 
     // Set the fill style of the canvas context to the gradient
     barsCanvasContext.fillStyle = canvasGradient;
@@ -151,7 +151,8 @@ async function resumeAudioContext(): Promise<void> {
   function hideElement() {
     //Will fade out with a delay of 2 seconds
     addClass(button, "fade-out");
-    const removeElementDisplay = timeoutCreator.set(() => {
+
+    Timeout.set(() => {
       removeClass(button, "fade-out");
       addClass(button, "hide");
       //We remove the fade-out function
