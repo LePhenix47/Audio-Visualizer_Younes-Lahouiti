@@ -12,7 +12,10 @@ import { splitString } from "./utils/functions/string.functions";
 import "./components/audio-player.component";
 import { createDataAndAudioAnalyzer } from "./utils/functions/audio.functions";
 import { isInRangePowerOfTwo } from "./utils/functions/number.function";
-import { createCanvasGradient } from "./utils/functions/canvas.functions";
+import {
+  createCanvasGradient,
+  setCanvasDimensions,
+} from "./utils/functions/canvas.functions";
 
 const barsCanvas: HTMLCanvasElement = selectQuery(".index__canvas--bars");
 const barsCanvasContext: CanvasRenderingContext2D = barsCanvas.getContext("2d");
@@ -26,14 +29,21 @@ const audioContext: AudioContext = new AudioContext();
 const main: HTMLElement = selectQuery("main");
 // When the window is resized, update the canvas dimensions and clear the canvas
 const mainDimensionsAndPosition: DOMRect = main.getBoundingClientRect();
-barsCanvas.width = mainDimensionsAndPosition.width;
-barsCanvas.height = mainDimensionsAndPosition.height;
+setCanvasDimensions(
+  barsCanvas,
+  mainDimensionsAndPosition.width,
+  mainDimensionsAndPosition.height
+);
 
 window.addEventListener("resize", () => {
   const mainDimensionsAndPositionResized: DOMRect =
     main.getBoundingClientRect();
-  barsCanvas.width = mainDimensionsAndPositionResized.width;
-  barsCanvas.height = mainDimensionsAndPositionResized.height;
+
+  setCanvasDimensions(
+    barsCanvas,
+    mainDimensionsAndPositionResized.width,
+    mainDimensionsAndPositionResized.height
+  );
 });
 
 // Create an audio node from the <audio> element
@@ -88,7 +98,7 @@ function drawBars(): void {
 
   // Create a linear gradient for the bars
   const arrayOfHexColors: string[] = ["#333", "#c4c4c4"];
-  const gradient2: CanvasGradient = createCanvasGradient(
+  const canvasGradient: CanvasGradient = createCanvasGradient(
     barsCanvasContext,
     0,
     0,
@@ -100,10 +110,10 @@ function drawBars(): void {
   // Loop through each element in the frequency data array
   for (let i = 0; i < bufferLength; i++) {
     // Calculate the height of the bar based on the frequency data at this index
-    singleBarHeight = frequencyDataArray[i] * 2;
+    singleBarHeight = frequencyDataArray[i] * 2.5;
 
     // Set the fill style of the canvas context to the gradient
-    barsCanvasContext.fillStyle = gradient2;
+    barsCanvasContext.fillStyle = canvasGradient;
 
     // Draw a rectangle for the bar at the current x value,
     // with a height based on the frequency data and a width based on the single bar width

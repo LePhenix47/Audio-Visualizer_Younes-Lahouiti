@@ -741,10 +741,6 @@ const audioPlayerTemplateStyle = /*css*/ `
     z-index: 2
 }
 
-.index__canvas {
-    z-index: 1
-}
-
 .index__audio-player--delete-button{
   display: inline-flex;
   justify-content: center;
@@ -758,16 +754,6 @@ const audioPlayerTemplateStyle = /*css*/ `
   aspect-ratio: 1/1;
   outline: none;
   border: inherit;
-}
-
-.index__canvas--round {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 125%;
-  height: 125%;
-  z-index: -1;
-  border-radius: inherit;
 }
 
 .index__svg {
@@ -974,7 +960,6 @@ const audioPlayerTemplateHTMLContent = /*html */ `
   <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
 </svg>
           </button>
-            <canvas class="index__canvas index__canvas--round"></canvas>
             <audio preload="auto" src=""></audio> 
             <h2 class="index__audio-player--name">Music title</h2>
             <div class="index__audio-player--progress">
@@ -1069,7 +1054,6 @@ class AudioPlayer extends HTMLElement {
      *
      * Setters and getters
      * */
-    //"title"
     /**
      * Gets the value of the "title" attribute.
      *
@@ -1086,7 +1070,6 @@ class AudioPlayer extends HTMLElement {
     set title(value) {
         this.setAttribute("title", value);
     }
-    //"is-playing"
     /**
      * Gets the value of the "is-playing" attribute.
      *
@@ -1103,7 +1086,6 @@ class AudioPlayer extends HTMLElement {
     set isPlaying(value) {
         this.setAttribute("is-playing", value);
     }
-    //"current-time"
     /**
      * Gets the value of the "current-time" attribute.
      *
@@ -1120,7 +1102,6 @@ class AudioPlayer extends HTMLElement {
     set currentTime(value) {
         this.setAttribute("current-time", value);
     }
-    //"total-time"
     /**
      * Gets the value of the "total-time" attribute.
      *
@@ -1137,7 +1118,6 @@ class AudioPlayer extends HTMLElement {
     set totalTime(value) {
         this.setAttribute("total-time", value);
     }
-    //"volume"
     /**
      * Gets the value of the "volume" attribute.
      *
@@ -1154,7 +1134,6 @@ class AudioPlayer extends HTMLElement {
     set volume(value) {
         this.setAttribute("volume", value);
     }
-    //"is-muted"
     /**
      * Gets the value of the "is-muted" attribute.
      *
@@ -1327,9 +1306,7 @@ class AudioPlayer extends HTMLElement {
             }
         });
         const deleteButton = selectQuery(".index__audio-player--delete-button", this.shadowRoot);
-        console_functions_log({ deleteButton });
         deleteButton.addEventListener("click", () => {
-            console_functions_log("click");
             hidePlayer(this.shadowRoot);
         });
     }
@@ -1635,29 +1612,37 @@ function hidePlayer(componentHost) {
 
 ;// CONCATENATED MODULE: ./src/utils/functions/canvas.functions.ts
 /**
+ * Sets the dimensions of the given canvas element to the specified width and height
+ *
+ * @param {HTMLCanvasElement} canvas - The canvas element to set the dimensions for
+ * @param {number} width - The desired width for the canvas element
+ * @param {number} height - The desired height for the canvas element
+ * @returns {void}
+ */
+function setCanvasDimensions(canvas, width, height) {
+    canvas.width = width;
+    canvas.height = height;
+}
+/**
  * Creates a linear gradient for a canvas with the specified start and end points and array of hexadecimal colors
  *
  * @param {CanvasRenderingContext2D} canvasContext - The context of the canvas we're giving the gradient effect to
- * @param {number} startX - The initial X value of the gradient, aka the left part
- * @param {number} startY - The initial Y value of the gradient, aka the top part
- * @param {number} endX - The final X value of the gradient, aka the right part
- * @param {number} endY - The final Y value of the gradient, aka the bottom part
- * @param {string[]} arrayOfHexColors - An array of hexadecimal colors for the gradient stops
+ * @param {number} startX - The initial X value of the gradient
+ * @param {number} startY - The initial Y value of the gradient
+ * @param {number} endX - The final X value of the gradient
+ * @param {number} endY - The final Y value of the gradient
+ * @param {string[]} arrayOfHexColors - An array of hexadecimal colors for the gradient stops, the order of the elements have an importance
  *
  * @returns {CanvasGradient} The CanvasGradient object representing the created gradient
  */
 function createCanvasGradient(canvasContext, startX, startY, endX, endY, arrayOfHexColors) {
     // Create a linear gradient for a canvas
-    const gradient = canvasContext.createLinearGradient(startX, //initial X value
-    startY, //initial Y value
-    endX, //final X value
-    endY //final Y value
-    );
+    const canvasGradient = canvasContext.createLinearGradient(startX, startY, endX, endY);
     for (let i = 0; i < arrayOfHexColors.length; i++) {
         const hexadecimalColor = arrayOfHexColors[i];
-        gradient.addColorStop(i, hexadecimalColor);
+        canvasGradient.addColorStop(i, hexadecimalColor);
     }
-    return gradient;
+    return canvasGradient;
 }
 
 ;// CONCATENATED MODULE: ./src/index.ts
@@ -1673,12 +1658,10 @@ const audioContext = new AudioContext();
 const main = selectQuery("main");
 // When the window is resized, update the canvas dimensions and clear the canvas
 const mainDimensionsAndPosition = main.getBoundingClientRect();
-barsCanvas.width = mainDimensionsAndPosition.width;
-barsCanvas.height = mainDimensionsAndPosition.height;
+setCanvasDimensions(barsCanvas, mainDimensionsAndPosition.width, mainDimensionsAndPosition.height);
 window.addEventListener("resize", () => {
     const mainDimensionsAndPositionResized = main.getBoundingClientRect();
-    barsCanvas.width = mainDimensionsAndPositionResized.width;
-    barsCanvas.height = mainDimensionsAndPositionResized.height;
+    setCanvasDimensions(barsCanvas, mainDimensionsAndPositionResized.width, mainDimensionsAndPositionResized.height);
 });
 // Create an audio node from the <audio> element
 const audioNodeSource = audioContext.createMediaElementSource(audioElement);
@@ -1722,13 +1705,13 @@ function drawBars() {
     analyzer.getByteFrequencyData(frequencyDataArray);
     // Create a linear gradient for the bars
     const arrayOfHexColors = ["#333", "#c4c4c4"];
-    const gradient2 = createCanvasGradient(barsCanvasContext, 0, 0, 0, barsCanvas.height, arrayOfHexColors);
+    const canvasGradient = createCanvasGradient(barsCanvasContext, 0, 0, 0, barsCanvas.height, arrayOfHexColors);
     // Loop through each element in the frequency data array
     for (let i = 0; i < bufferLength; i++) {
         // Calculate the height of the bar based on the frequency data at this index
-        singleBarHeight = frequencyDataArray[i] * 2;
+        singleBarHeight = frequencyDataArray[i] * 2.5;
         // Set the fill style of the canvas context to the gradient
-        barsCanvasContext.fillStyle = gradient2;
+        barsCanvasContext.fillStyle = canvasGradient;
         // Draw a rectangle for the bar at the current x value,
         // with a height based on the frequency data and a width based on the single bar width
         barsCanvasContext.fillRect(axisXBarValue, barsCanvas.height - singleBarHeight, singleBarWidth, singleBarHeight);

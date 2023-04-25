@@ -30,9 +30,10 @@ import {
   splitString,
 } from "../utils/functions/string.functions";
 
-const audioPlayerTemplateElement = document.createElement("template");
+const audioPlayerTemplateElement: HTMLTemplateElement =
+  document.createElement("template");
 
-const jsClasses = /* css*/ `
+const jsClasses: string = /* css*/ `
 .hide{
     display: none !important;
 }
@@ -58,7 +59,7 @@ const jsClasses = /* css*/ `
 }
 `;
 
-const cssReset = /*css*/ `
+const cssReset: string = /*css*/ `
 *,
 ::before,
 ::after {
@@ -165,7 +166,7 @@ label:hover{
 
 `;
 
-const audioPlayerTemplateStyle = /*css*/ `
+const audioPlayerTemplateStyle: string = /*css*/ `
 .index {
     align-items: center;
     background-color: transparent;
@@ -176,10 +177,6 @@ const audioPlayerTemplateStyle = /*css*/ `
     min-height: 78dvh;
     position: relative;
     z-index: 2
-}
-
-.index__canvas {
-    z-index: 1
 }
 
 .index__audio-player--delete-button{
@@ -195,16 +192,6 @@ const audioPlayerTemplateStyle = /*css*/ `
   aspect-ratio: 1/1;
   outline: none;
   border: inherit;
-}
-
-.index__canvas--round {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 125%;
-  height: 125%;
-  z-index: -1;
-  border-radius: inherit;
 }
 
 .index__svg {
@@ -396,7 +383,7 @@ const audioPlayerTemplateStyle = /*css*/ `
 
 `;
 
-const audioPlayerTemplateHTMLContent = /*html */ `
+const audioPlayerTemplateHTMLContent: string = /*html */ `
  <label for="audio-file" class="index__label index__file-label">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="svg index__svg" fill="currentColor">
                 <path
@@ -412,7 +399,6 @@ const audioPlayerTemplateHTMLContent = /*html */ `
   <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
 </svg>
           </button>
-            <canvas class="index__canvas index__canvas--round"></canvas>
             <audio preload="auto" src=""></audio> 
             <h2 class="index__audio-player--name">Music title</h2>
             <div class="index__audio-player--progress">
@@ -514,7 +500,6 @@ export class AudioPlayer extends HTMLElement {
    * Setters and getters
    * */
 
-  //"title"
   /**
    * Gets the value of the "title" attribute.
    *
@@ -531,8 +516,6 @@ export class AudioPlayer extends HTMLElement {
   set title(value: string) {
     this.setAttribute("title", value);
   }
-
-  //"is-playing"
 
   /**
    * Gets the value of the "is-playing" attribute.
@@ -551,7 +534,6 @@ export class AudioPlayer extends HTMLElement {
     this.setAttribute("is-playing", value);
   }
 
-  //"current-time"
   /**
    * Gets the value of the "current-time" attribute.
    *
@@ -568,8 +550,6 @@ export class AudioPlayer extends HTMLElement {
   set currentTime(value: string) {
     this.setAttribute("current-time", value);
   }
-
-  //"total-time"
 
   /**
    * Gets the value of the "total-time" attribute.
@@ -588,7 +568,6 @@ export class AudioPlayer extends HTMLElement {
     this.setAttribute("total-time", value);
   }
 
-  //"volume"
   /**
    * Gets the value of the "volume" attribute.
    *
@@ -606,7 +585,6 @@ export class AudioPlayer extends HTMLElement {
     this.setAttribute("volume", value);
   }
 
-  //"is-muted"
   /**
    * Gets the value of the "is-muted" attribute.
    *
@@ -838,9 +816,7 @@ export class AudioPlayer extends HTMLElement {
       ".index__audio-player--delete-button",
       this.shadowRoot
     );
-    log({ deleteButton });
     deleteButton.addEventListener("click", () => {
-      log("click");
       hidePlayer(this.shadowRoot);
     });
   }
