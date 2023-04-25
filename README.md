@@ -1,36 +1,51 @@
 # Audio Visualizer
+## Table of Contents
+
+- [Audio Visualizer](#audio-visualizer)
+  - [Table of Contents](#table-of-contents)
+  - [1 Description](#1-description)
+  - [2 Features](#2-features)
+  - [3 Technologies Used](#3-technologies-used)
+  - [4 Usage](#4-usage)
+  - [5 Credits](#5-credits)
+  - [6 License](#6-license)
 
 
 https://lephenix47.github.io/Audio-Visualizer_Younes-Lahouiti/
 
-## Description
+## 1 Description
 
 The Audio Visualizer is a web application that allows you to upload an audio file and play it with a nice background effect. The application displays a progress bar with a timestamp that shows the current time and total time of the audio file.
 
-## Features
+## 2 Features
 
 - Upload and play an audio file
 - Visualize the audio with a background effect
 - Display a progress bar with a timestamp
 
-## Technologies Used
+## 3 Technologies Used
 
 - HTML
 - SASS
 - TypeScript
 
-## Usage
+<a href="https://developer.mozilla.org/en-US/docs/Glossary/HTML5" target="_blank" rel="noreferrer" title="HTML5"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/html5-colored.svg" width="36" height="36" alt="HTML5" /></a>
+<a href="https://sass-lang.com/" target="_blank" rel="noreferrer" title="SASS"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/sass-colored.svg" width="36" height="36" alt="Sass" /></a>
+<a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer" title="TypeScript"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/typescript-colored.svg" width="36" height="36" alt="TypeScript" /></a>
 
-1. Clone the repository
-2. Open `index.html` in your web browser
-3. Click the "Upload" button to select an audio file
-4. Press the "Play" button to play the audio file
-5. Enjoy the audio with the background effect and progress bar
 
-## Credits
+## 4 Usage
+
+1. Open the GitHube Pages link
+2. Click the "Authorize audio play" to allow the browser to get the audio context from audio
+3. Upload an audio file by either dropping the MP3 file in the dropzone or by clicking the dropzone and then upload the MP3 file
+4. Click on the play button to play the music
+5. Enjoy
+
+## 5 Credits
 
 This project was created by Younes Lahouiti. 
 
-## License
+## 6 License
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
