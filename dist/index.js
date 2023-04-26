@@ -842,6 +842,10 @@ const audioPlayerTemplateStyle = /*css*/ `
     width: var(--progress)
 }
 
+.index__audio-player--current-time,.index__audio-player--total-time{
+  font-variant-numeric: tabular-nums;
+}
+
 .index__audio-player--controls, .index__audio-player--timestamp {
     align-items: center;
     display: flex;
