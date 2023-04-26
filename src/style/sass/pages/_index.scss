@@ -12,7 +12,7 @@
     z-index: 2;
 
     @include mobile-landscape-only {
-        min-height: 150vh;
+        min-height: 200vh;
         gap: 35px;
     }
 
